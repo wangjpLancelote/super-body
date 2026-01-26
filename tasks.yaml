@@ -1,0 +1,199 @@
+# TASKS.yaml
+# Machine-readable execution plan for AI Vibe Coding
+# Generated from TASKS.md
+# Purpose: enable automatic orchestration (CrewAI / AutoGen / MCP-style agents)
+
+version: 1.0
+principles:
+  - secure_by_design
+  - ai_as_plugin
+  - least_privilege
+  - auditable
+
+globals:
+  constraints:
+    - no_hardcoded_secrets
+    - no_rls_bypass
+    - write_operations_default_dry_run
+  review_required: true
+
+phases:
+  - name: infrastructure
+    order: 1
+    tasks:
+      - id: A1
+        name: supabase_project_init
+        domain: supabase
+        description: Initialize Supabase project and enable core services
+        inputs: []
+        outputs:
+          - supabase.config.md
+        permissions:
+          db: false
+          storage: false
+        constraints:
+          - read_only_environment_setup
+
+      - id: A2
+        name: database_schema
+        domain: data
+        description: Create database schema with pgvector support
+        inputs:
+          - supabase.config.md
+        outputs:
+          - supabase/migrations/schema.sql
+        permissions:
+          db: true
+          storage: false
+
+      - id: A3
+        name: row_level_security
+        domain: data
+        description: Apply RLS policies for all business tables
+        inputs:
+          - supabase/migrations/schema.sql
+        outputs:
+          - supabase/migrations/rls.sql
+        permissions:
+          db: true
+          storage: false
+
+  - name: backend
+    order: 2
+    tasks:
+      - id: B1
+        name: edge_function_base
+        domain: backend
+        description: Initialize Edge Function shared auth/context
+        inputs:
+          - supabase.config.md
+        outputs:
+          - supabase/functions/_shared/auth.ts
+          - supabase/functions/_shared/context.ts
+        permissions:
+          db: false
+          storage: false
+
+      - id: B2
+        name: todo_api
+        domain: backend
+        description: CRUD API for Todo with JWT enforcement
+        inputs:
+          - supabase/functions/_shared/auth.ts
+        outputs:
+          - supabase/functions/todos/index.ts
+        permissions:
+          db: true
+          storage: false
+
+      - id: B3
+        name: file_upload_api
+        domain: backend
+        description: Signed upload URL and file index writing
+        inputs:
+          - supabase/functions/_shared/auth.ts
+        outputs:
+          - supabase/functions/files/index.ts
+        permissions:
+          db: true
+          storage: true
+
+  - name: frontend
+    order: 3
+    tasks:
+      - id: D1
+        name: rn_project_init
+        domain: frontend
+        description: Initialize Expo React Native project
+        inputs:
+          - supabase.config.md
+        outputs:
+          - apps/mobile/App.tsx
+          - apps/mobile/src/lib/supabase.ts
+        permissions:
+          network: true
+
+      - id: D2
+        name: auth_ui
+        domain: frontend
+        description: Login/logout and role-aware state
+        inputs:
+          - apps/mobile/src/lib/supabase.ts
+        outputs:
+          - apps/mobile/src/auth/*
+        permissions:
+          network: true
+
+      - id: D3
+        name: todo_ui
+        domain: frontend
+        description: Todo list with realtime sync
+        inputs:
+          - supabase/functions/todos/index.ts
+        outputs:
+          - apps/mobile/src/todos/*
+        permissions:
+          network: true
+
+  - name: ai
+    order: 4
+    tasks:
+      - id: C1
+        name: langchain_runtime
+        domain: ai
+        description: Define LangChain runtime and env handling
+        inputs: []
+        outputs:
+          - ai/runtime.md
+        permissions:
+          llm: true
+
+      - id: C2
+        name: vector_store
+        domain: ai
+        description: Supabase pgvector integration
+        inputs:
+          - supabase/migrations/schema.sql
+        outputs:
+          - ai/vector.ts
+        permissions:
+          db: true
+          llm: true
+
+      - id: C3
+        name: ai_tools
+        domain: ai
+        description: Define LangChain tools wrapping system capabilities
+        inputs:
+          - ai/vector.ts
+        outputs:
+          - ai/tools.ts
+        permissions:
+          db: true
+          llm: true
+
+      - id: C4
+        name: ai_assistant_api
+        domain: ai
+        description: Controlled AI assistant endpoint via Edge Function
+        inputs:
+          - ai/tools.ts
+          - supabase/functions/_shared/auth.ts
+        outputs:
+          - supabase/functions/ai-assistant/index.ts
+        permissions:
+          db: true
+          llm: true
+
+execution:
+  strategy: phased_parallel
+  default_agent_mode: constrained
+  confirmation_required_for:
+    - db_write
+    - file_write
+    - ai_execute
+
+success_criteria:
+  - all_tasks_have_outputs
+  - no_rls_violation
+  - ai_actions_auditable

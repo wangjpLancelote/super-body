@@ -1,0 +1,177 @@
+# AGENTS.yaml
+# AI Agent Capability & Responsibility Definition
+# Purpose: define WHO can execute WHICH tasks under WHAT constraints
+
+version: 1.0
+
+principles:
+  - separation_of_duties
+  - least_privilege
+  - explicit_scope
+  - human_in_the_loop
+
+# -------------------------------------------------------------------
+# Global agent rules
+# -------------------------------------------------------------------
+global_rules:
+  - agents_must_follow_repo_structure: true
+  - agents_must_follow_tasks_yaml: true
+  - agents_cannot_create_new_tasks: true
+  - agents_cannot_modify_plan_without_human_approval: true
+  - default_write_mode: dry_run
+  - all_outputs_must_be_logged: true
+
+# -------------------------------------------------------------------
+# Agent definitions
+# -------------------------------------------------------------------
+agents:
+
+  infra_agent:
+    description: Infrastructure & Supabase setup agent
+    responsibilities:
+      - supabase_project
+      - database_schema
+      - row_level_security
+    allowed_tasks:
+      - A1
+      - A2
+      - A3
+    permissions:
+      db:
+        read: true
+        write: true
+      storage:
+        read: false
+        write: false
+      network: false
+      llm: false
+    constraints:
+      - must_not_bypass_rls
+      - sql_only_in_migrations
+      - no_edge_function_code
+    escalation:
+      require_human_approval_for:
+        - production_schema_change
+
+  backend_agent:
+    description: Edge Functions & BFF implementation agent
+    responsibilities:
+      - api_layer
+      - authentication_enforcement
+      - business_logic
+    allowed_tasks:
+      - B1
+      - B2
+      - B3
+    permissions:
+      db:
+        read: true
+        write: true
+      storage:
+        read: true
+        write: true
+      network: true
+      llm: false
+    constraints:
+      - must_use_shared_auth
+      - no_direct_db_without_supabase_client
+      - no_business_logic_in_client
+    escalation:
+      require_human_approval_for:
+        - new_public_endpoint
+
+  frontend_agent:
+    description: React Native mobile application agent
+    responsibilities:
+      - ui_implementation
+      - client_state_management
+      - api_consumption
+    allowed_tasks:
+      - D1
+      - D2
+      - D3
+    permissions:
+      db:
+        read: false
+        write: false
+      storage:
+        read: false
+        write: false
+      network: true
+      llm: false
+    constraints:
+      - no_secrets_in_client
+      - api_calls_only_through_supabase_or_bff
+      - role_based_ui_only
+    escalation:
+      require_human_approval_for:
+        - new_client_permission
+
+  ai_agent:
+    description: LangChain, Agent, and AI integration agent
+    responsibilities:
+      - vector_store
+      - tool_definition
+      - agent_logic
+    allowed_tasks:
+      - C1
+      - C2
+      - C3
+      - C4
+    permissions:
+      db:
+        read: true
+        write: true
+      storage:
+        read: false
+        write: false
+      network: true
+      llm: true
+    constraints:
+      - all_writes_must_go_through_tools
+      - default_dry_run
+      - no_autonomous_execution
+    escalation:
+      require_human_approval_for:
+        - ai_execute
+        - write_with_side_effects
+
+  design_agent:
+    description: Information architecture and UI prototype agent
+    responsibilities:
+      - information_architecture
+      - wireframes
+    allowed_tasks:
+      - F1
+      - F2
+    permissions:
+      db:
+        read: false
+        write: false
+      storage:
+        read: false
+        write: false
+      network: false
+      llm: false
+    constraints:
+      - no_real_code
+      - documentation_only
+
+# -------------------------------------------------------------------
+# Coordination rules
+# -------------------------------------------------------------------
+coordination:
+  execution_mode: orchestrated
+  parallel_execution_allowed: true
+  conflict_resolution:
+    strategy: human_override
+  audit:
+    enabled: true
+    log_level: detailed
+
+# -------------------------------------------------------------------
+# Final invariant
+# -------------------------------------------------------------------
+invariant:
+  - ai_is_never_the_final_authority
+  - human_has_kill_switch
