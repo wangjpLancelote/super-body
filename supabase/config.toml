@@ -1,0 +1,60 @@
+# Supabase Configuration File
+
+[project]
+# Project name
+project_id = "super-body"
+
+# Database configuration
+[db]
+port = 5432
+major_version = 15
+
+# API Server configuration
+[api]
+port = 54321
+schemas = ["public", "storage", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+# Auth configuration
+[auth]
+enable_signup = true
+email_autoconfirm = false
+external_auth_enabled = true
+
+# Storage configuration
+[storage]
+file_size_limit = 52428800  # 50MB
+s3_host = "http://localhost:9000"
+s3_region = "us-east-1"
+s3_access_key = "minioadmin"
+s3_secret_key = "minioadmin"
+s3_bucket = "stub"
+public_url = "http://localhost:9000"
+
+# Realtime configuration
+[realtime]
+enabled = true
+max_bytes_per_second = 1000000
+max_channels_per_client = 128
+max_joins_per_second = 500
+max_presence_churn_per_second = 500
+max_broadcast_payload_bytes = 250000
+log_level = "info"
+
+# Edge Functions configuration
+[[edge_functions]]
+slug = "_shared"
+verify_jwt = false
+
+[[edge_functions]]
+slug = "todos"
+verify_jwt = true
+
+[[edge_functions]]
+slug = "files"
+verify_jwt = true
+
+[[edge_functions]]
+slug = "ai-assistant"
+verify_jwt = true

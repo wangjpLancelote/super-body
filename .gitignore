@@ -1,0 +1,36 @@
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+/apps/mobile/node_modules/
+/ai/node_modules/
+deno.lock
+
+# Build outputs
+/apps/mobile/dist/
+/apps/mobile/build/
+/ai/dist/
+dist/
+
+# Supabase
+supabase/.branches/
+supabase/.temp/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Temporary files
+*.tmp
+.cache/

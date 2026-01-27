@@ -12,6 +12,13 @@
 root/
 ├─ apps/
 │  └─ mobile/                # React Native (Expo)
+│     ├─ src/
+│     │  ├─ auth/
+│     │  ├─ todos/
+│     │  ├─ files/
+│     │  └─ lib/
+│     ├─ package.json
+│     └─ app.json
 │
 ├─ supabase/
 │  ├─ functions/             # Edge Functions（BFF + AI）
@@ -19,22 +26,28 @@ root/
 │  │  │  ├─ auth.ts
 │  │  │  └─ context.ts
 │  │  ├─ todos/
+│  │  │  └─ index.ts
 │  │  ├─ files/
-│  │  └─ ai-assistant/
+│  │  │  └─ index.ts
+│  │  ├─ ai-assistant/
+│  │  │  └─ index.ts
+│  │  └─ deno.json
 │  │
 │  ├─ migrations/
-│  │  ├─ schema.sql
-│  │  └─ rls.sql
+│  │  ├─ 001_schema.sql
+│  │  └─ 002_rls.sql
 │  │
-│  └─ seed.sql
+│  ├─ seed.sql
+│  └─ config.toml
 │
 ├─ ai/
 │  ├─ runtime.md
 │  ├─ vector.ts
 │  ├─ tools.ts
 │  ├─ agent.ts
-│  └─ prompts/
-│     └─ system.md
+│  ├─ prompts/
+│  │  └─ system.md
+│  └─ package.json
 │
 ├─ ui/
 │  ├─ ia.md
@@ -46,7 +59,11 @@ root/
 │  ├─ REPO_STRUCTURE.md
 │  └─ SECURITY.md
 │
-└─ README.md
+├─ .env.example
+├─ .gitignore
+├─ AGENTS.md
+├─ README.md
+└─ package.json (root)
 ```
 
 ---
