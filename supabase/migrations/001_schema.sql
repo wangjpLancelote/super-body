@@ -95,6 +95,57 @@ CREATE TABLE IF NOT EXISTS public.ai_logs (
 -- Create index on ai_logs
 CREATE INDEX IF NOT EXISTS ai_logs_user_id_created_at_idx ON public.ai_logs(user_id, created_at DESC);
 
+-- Vector search RPC functions
+CREATE OR REPLACE FUNCTION public.match_documents(
+  query_embedding vector(1536),
+  match_count int DEFAULT 5,
+  p_user_id uuid DEFAULT null
+) RETURNS TABLE (
+  id uuid,
+  title text,
+  content text,
+  similarity float
+) LANGUAGE plpgsql AS $$
+BEGIN
+  RETURN QUERY
+    SELECT
+      d.id,
+      d.title,
+      d.content,
+      1 - (d.embedding <=> query_embedding) AS similarity
+    FROM public.documents d
+    WHERE (p_user_id IS NULL OR d.user_id = p_user_id)
+    ORDER BY d.embedding <=> query_embedding
+    LIMIT match_count;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION public.match_todos(
+  query_embedding vector(1536),
+  match_count int DEFAULT 5,
+  p_user_id uuid DEFAULT null
+) RETURNS TABLE (
+  id uuid,
+  title text,
+  description text,
+  status text,
+  similarity float
+) LANGUAGE plpgsql AS $$
+BEGIN
+  RETURN QUERY
+    SELECT
+      t.id,
+      t.title,
+      t.description,
+      t.status,
+      1 - (t.embedding <=> query_embedding) AS similarity
+    FROM public.todos t
+    WHERE (p_user_id IS NULL OR t.user_id = p_user_id)
+    ORDER BY t.embedding <=> query_embedding
+    LIMIT match_count;
+END;
+$$;
+
 -- Enable Row Level Security on all tables
 ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.todos ENABLE ROW LEVEL SECURITY;

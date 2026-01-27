@@ -134,6 +134,11 @@ CREATE POLICY "Users can view their own AI logs"
 ON public.ai_logs FOR SELECT
 USING (auth.uid() = user_id);
 
+-- Users can insert their own AI logs
+CREATE POLICY "Users can insert their own AI logs"
+ON public.ai_logs FOR INSERT
+WITH CHECK (auth.uid() = user_id);
+
 -- Service Role can insert logs (for all users)
 CREATE POLICY "Service Role can insert AI logs"
 ON public.ai_logs FOR INSERT

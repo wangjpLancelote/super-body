@@ -1,25 +1,64 @@
 /**
  * LangChain Tool Definitions
- * 
- * These tools define what the AI agent can do.
+ *
+ * These tools call Supabase Edge Functions (BFF) instead of accessing the DB directly.
  * All write operations default to dry-run mode.
  */
 
-import { Tool } from '@langchain/core/tools';
 import { z } from 'zod';
-import { createClient } from '@supabase/supabase-js';
-import {
-  searchDocuments,
-  searchTodos,
-  storeTodoEmbedding,
-} from './vector.js';
-import axios from 'axios';
 
-// Initialize Supabase client
-const supabaseUrl = process.env.SUPABASE_URL || '';
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+const supabaseUrl = process.env.SUPABASE_URL ?? '';
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY ?? '';
+const edgeBaseUrl =
+  process.env.SUPABASE_EDGE_URL ?? `${supabaseUrl.replace(/\/$/, '')}/functions/v1`;
 
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+function requireEdgeConfig() {
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error('Missing SUPABASE_URL or SUPABASE_ANON_KEY');
+  }
+}
+
+async function callEdge(
+  path: string,
+  accessToken: string,
+  options: {
+    method?: string;
+    body?: Record<string, unknown>;
+    query?: Record<string, string | undefined>;
+  } = {},
+) {
+  requireEdgeConfig();
+  const method = options.method ?? 'GET';
+  const query = options.query ?? {};
+  const url = new URL(`${edgeBaseUrl}/${path}`);
+  Object.entries(query).forEach(([key, value]) => {
+    if (value) url.searchParams.set(key, value);
+  });
+
+  const res = await fetch(url.toString(), {
+    method,
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      apikey: supabaseAnonKey,
+      'Content-Type': 'application/json',
+    },
+    body: options.body ? JSON.stringify(options.body) : undefined,
+  });
+
+  const payload = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(payload?.error ?? `Edge error: ${res.status}`);
+  }
+  return payload;
+}
+
+const baseAuthSchema = z.object({
+  user_id: z.string().uuid().describe('The UUID of the user'),
+  access_token: z
+    .string()
+    .min(1)
+    .describe('Supabase user access token for Edge Function auth'),
+});
 
 // ============================================================================
 // GET_TODOS Tool
@@ -29,48 +68,25 @@ export const getTodosTool = {
   name: 'get_todos',
   description:
     'Retrieve all todos for a user. Returns title, description, status, and due date.',
-  schema: z.object({
-    user_id: z.string().uuid().describe('The UUID of the user'),
+  schema: baseAuthSchema.extend({
     status: z
       .enum(['todo', 'doing', 'done'])
       .optional()
       .describe('Filter by status (optional)'),
   }),
   async execute({
-    user_id,
+    access_token,
     status,
   }: {
     user_id: string;
+    access_token: string;
     status?: string;
   }) {
-    try {
-      let query = supabase
-        .from('todos')
-        .select('id, title, description, status, due_at, created_at')
-        .eq('user_id', user_id)
-        .order('created_at', { ascending: false });
-
-      if (status) {
-        query = query.eq('status', status);
-      }
-
-      const { data, error } = await query;
-
-      if (error) {
-        throw error;
-      }
-
-      return {
-        success: true,
-        count: data?.length || 0,
-        todos: data || [],
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: String(error),
-      };
-    }
+    const data = await callEdge('todos', access_token, {
+      method: 'GET',
+      query: { status },
+    });
+    return data;
   },
 };
 
@@ -82,8 +98,7 @@ export const createTodoTool = {
   name: 'create_todo',
   description:
     'Create a new todo item. Runs in DRY-RUN mode by default, showing what would be created.',
-  schema: z.object({
-    user_id: z.string().uuid().describe('The UUID of the user'),
+  schema: baseAuthSchema.extend({
     title: z.string().min(1).describe('The title of the todo'),
     description: z.string().optional().describe('Optional description'),
     due_at: z
@@ -93,66 +108,41 @@ export const createTodoTool = {
     dry_run: z.boolean().default(true).describe('Run in dry-run mode (default: true)'),
   }),
   async execute({
-    user_id,
+    access_token,
     title,
     description,
     due_at,
     dry_run = true,
   }: {
     user_id: string;
+    access_token: string;
     title: string;
     description?: string;
     due_at?: string;
     dry_run?: boolean;
   }) {
-    try {
-      const todoData = {
-        user_id,
-        title,
-        description,
-        due_at: due_at ? new Date(due_at).toISOString() : null,
-        status: 'todo',
-      };
+    const todoData = {
+      title,
+      description,
+      due_at,
+      status: 'todo',
+    };
 
-      if (dry_run) {
-        return {
-          success: true,
-          dryRun: true,
-          action: 'create_todo',
-          wouldCreate: todoData,
-          message: 'Dry-run: This todo would be created. Call with dry_run=false to execute.',
-        };
-      }
-
-      // Actual execution only with dry_run=false
-      const { data, error } = await supabase
-        .from('todos')
-        .insert(todoData)
-        .select()
-        .single();
-
-      if (error) {
-        throw error;
-      }
-
-      // Generate embedding for the new todo
-      if (data) {
-        await storeTodoEmbedding(data.id, user_id, title, description);
-      }
-
+    if (dry_run) {
       return {
         success: true,
-        dryRun: false,
+        dryRun: true,
         action: 'create_todo',
-        created: data,
-        message: 'Todo created successfully',
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: String(error),
+        wouldCreate: todoData,
+        message: 'Dry-run: This todo would be created. Call with dry_run=false to execute.',
       };
     }
+
+    const data = await callEdge('todos', access_token, {
+      method: 'POST',
+      body: todoData,
+    });
+    return data;
   },
 };
 
@@ -164,75 +154,29 @@ export const searchDocumentsTool = {
   name: 'search_documents',
   description:
     'Search documents using semantic similarity. Returns relevant documents with similarity scores.',
-  schema: z.object({
-    user_id: z.string().uuid().describe('The UUID of the user'),
+  schema: baseAuthSchema.extend({
     query: z.string().min(1).describe('The search query'),
     limit: z.number().int().min(1).max(20).default(5).describe('Maximum number of results'),
   }),
   async execute({
-    user_id,
+    access_token,
     query,
     limit = 5,
   }: {
     user_id: string;
+    access_token: string;
     query: string;
     limit?: number;
   }) {
-    try {
-      const results = await searchDocuments(user_id, query, limit);
-
-      return {
-        success: true,
+    const data = await callEdge('ai-assistant', access_token, {
+      method: 'POST',
+      body: {
+        action: 'search_documents',
         query,
-        count: results.length,
-        documents: results,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: String(error),
-      };
-    }
-  },
-};
-
-// ============================================================================
-// SEARCH_TODOS Tool
-// ============================================================================
-
-export const searchTodosTool = {
-  name: 'search_todos',
-  description:
-    'Search todos using semantic similarity. Returns relevant todos with similarity scores.',
-  schema: z.object({
-    user_id: z.string().uuid().describe('The UUID of the user'),
-    query: z.string().min(1).describe('The search query'),
-    limit: z.number().int().min(1).max(20).default(5).describe('Maximum number of results'),
-  }),
-  async execute({
-    user_id,
-    query,
-    limit = 5,
-  }: {
-    user_id: string;
-    query: string;
-    limit?: number;
-  }) {
-    try {
-      const results = await searchTodos(user_id, query, limit);
-
-      return {
-        success: true,
-        query,
-        count: results.length,
-        todos: results,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: String(error),
-      };
-    }
+        limit,
+      },
+    });
+    return data;
   },
 };
 
@@ -252,37 +196,36 @@ export const getStockPriceTool = {
       .describe('Stock symbol (e.g., AAPL)'),
   }),
   async execute({ symbol }: { symbol: string }) {
-    try {
-      // Mock stock price API - replace with real API
-      const mockPrices: { [key: string]: number } = {
-        AAPL: 192.53,
-        GOOGL: 140.29,
-        MSFT: 416.04,
-        AMZN: 178.64,
-        TSLA: 242.84,
-      };
+    const apiBase = process.env.STOCK_API_BASE_URL ?? '';
+    const apiKey = process.env.STOCK_API_KEY ?? '';
 
-      if (!mockPrices[symbol]) {
-        return {
-          success: false,
-          error: `Symbol ${symbol} not found`,
-        };
-      }
-
-      return {
-        success: true,
-        symbol,
-        price: mockPrices[symbol],
-        currency: 'USD',
-        timestamp: new Date().toISOString(),
-        source: 'mock_data',
-      };
-    } catch (error) {
+    if (!apiBase || !apiKey) {
       return {
         success: false,
-        error: String(error),
+        error: 'Missing STOCK_API_BASE_URL or STOCK_API_KEY',
       };
     }
+
+    const url = new URL(apiBase);
+    url.searchParams.set('symbol', symbol);
+    url.searchParams.set('apikey', apiKey);
+
+    const res = await fetch(url.toString());
+    if (!res.ok) {
+      return {
+        success: false,
+        error: `Stock API error: ${res.status}`,
+      };
+    }
+
+    const payload = await res.json().catch(() => ({}));
+    return {
+      success: true,
+      symbol,
+      data: payload,
+      source: apiBase,
+      timestamp: new Date().toISOString(),
+    };
   },
 };
 
@@ -294,7 +237,6 @@ export const tools = [
   getTodosTool,
   createTodoTool,
   searchDocumentsTool,
-  searchTodosTool,
   getStockPriceTool,
 ];
 
@@ -303,7 +245,7 @@ export const tools = [
  */
 export async function executeTool(
   toolName: string,
-  args: Record<string, unknown>
+  args: Record<string, unknown>,
 ): Promise<unknown> {
   const tool = tools.find((t) => t.name === toolName);
 
@@ -311,14 +253,13 @@ export async function executeTool(
     throw new Error(`Tool ${toolName} not found`);
   }
 
-  return tool.execute(args);
+  return tool.execute(args as never);
 }
 
 export default {
   getTodosTool,
   createTodoTool,
   searchDocumentsTool,
-  searchTodosTool,
   getStockPriceTool,
   tools,
   executeTool,

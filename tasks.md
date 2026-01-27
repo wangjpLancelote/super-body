@@ -24,7 +24,7 @@
 - embedding 字段预留
 
 **产出**：
-- schema.sql
+- supabase/migrations/001_schema.sql
 
 ---
 
@@ -34,7 +34,7 @@
 - Service Role + user_id 注入策略
 
 **产出**：
-- rls.sql
+- supabase/migrations/002_rls.sql
 
 ---
 
@@ -47,6 +47,7 @@
 
 **产出**：
 - /supabase/functions/_shared/auth.ts
+- /supabase/functions/_shared/context.ts
 
 ---
 
@@ -60,7 +61,7 @@
 - 不允许绕过 RLS
 
 **产出**：
-- functions/todos/index.ts
+- supabase/functions/todos/index.ts
 
 ---
 
@@ -69,7 +70,7 @@
 - 写入 files 表索引
 
 **产出**：
-- functions/files/index.ts
+- supabase/functions/files/index.ts
 
 ---
 
@@ -120,7 +121,7 @@ POST /ai/assistant
 - LangChain Agent 调用
 
 **产出**：
-- functions/ai-assistant/index.ts
+- supabase/functions/ai-assistant/index.ts
 
 ---
 
@@ -131,8 +132,8 @@ POST /ai/assistant
 - Supabase Client 初始化
 
 **产出**：
-- App.tsx
-- src/lib/supabase.ts
+- apps/mobile/App.tsx
+- apps/mobile/src/lib/supabase.ts
 
 ---
 
@@ -142,7 +143,7 @@ POST /ai/assistant
 - Role 感知
 
 **产出**：
-- src/auth/*
+- apps/mobile/src/auth/*
 
 ---
 
@@ -152,7 +153,7 @@ POST /ai/assistant
 - Realtime 订阅
 
 **产出**：
-- src/todos/*
+- apps/mobile/src/todos/*
 
 ---
 
@@ -161,7 +162,7 @@ POST /ai/assistant
 - 预览
 
 **产出**：
-- src/files/*
+- apps/mobile/src/files/*
 
 ---
 
@@ -172,7 +173,7 @@ POST /ai/assistant
 - 状态同步
 
 **产出**：
-- realtime.ts
+- apps/mobile/src/realtime.ts
 
 ---
 
@@ -181,7 +182,7 @@ POST /ai/assistant
 - 自动重连
 
 **产出**：
-- src/stocks/socket.ts
+- apps/mobile/src/stocks/socket.ts
 
 ---
 

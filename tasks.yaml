@@ -41,7 +41,7 @@ phases:
         inputs:
           - supabase.config.md
         outputs:
-          - supabase/migrations/schema.sql
+          - supabase/migrations/001_schema.sql
         permissions:
           db: true
           storage: false
@@ -51,9 +51,9 @@ phases:
         domain: data
         description: Apply RLS policies for all business tables
         inputs:
-          - supabase/migrations/schema.sql
+          - supabase/migrations/001_schema.sql
         outputs:
-          - supabase/migrations/rls.sql
+          - supabase/migrations/002_rls.sql
         permissions:
           db: true
           storage: false
@@ -135,6 +135,17 @@ phases:
         permissions:
           network: true
 
+      - id: D4
+        name: file_ui
+        domain: frontend
+        description: File upload & preview UI wired to Supabase storage
+        inputs:
+          - supabase/functions/files/index.ts
+        outputs:
+          - apps/mobile/src/files/*
+        permissions:
+          network: true
+
   - name: ai
     order: 4
     tasks:
@@ -153,7 +164,7 @@ phases:
         domain: ai
         description: Supabase pgvector integration
         inputs:
-          - supabase/migrations/schema.sql
+          - supabase/migrations/001_schema.sql
         outputs:
           - ai/vector.ts
         permissions:
@@ -184,6 +195,54 @@ phases:
         permissions:
           db: true
           llm: true
+
+  - name: realtime
+    order: 5
+    tasks:
+      - id: E1
+        name: supabase_realtime
+        domain: realtime
+        description: Subscribe to todo changes via Supabase Realtime
+        inputs:
+          - apps/mobile/src/lib/supabase.ts
+        outputs:
+          - apps/mobile/src/realtime.ts
+        permissions:
+          network: true
+
+      - id: E2
+        name: stock_socket
+        domain: realtime
+        description: WebSocket stock ticker client with auto reconnect
+        inputs: []
+        outputs:
+          - apps/mobile/src/stocks/socket.ts
+        permissions:
+          network: true
+
+  - name: ui
+    order: 6
+    tasks:
+      - id: F1
+        name: information_architecture
+        domain: ui
+        description: Define navigation and page structure
+        inputs: []
+        outputs:
+          - ui/ia.md
+        permissions:
+          design: true
+
+      - id: F2
+        name: core_wireframes
+        domain: ui
+        description: Wireframes for login, todo, and AI assistant screens
+        inputs:
+          - ui/ia.md
+        outputs:
+          - ui/wireframes.md
+        permissions:
+          design: true
 
 execution:
   strategy: phased_parallel
