@@ -16,20 +16,64 @@ export default function AuthScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleSignIn = async () => {
-    setLoading(true);
-    const error = await signInWithEmail(email.trim(), password);
-    setLoading(false);
-    if (error) Alert.alert('Sign in failed', error);
+  const validateForm = () => {
+    if (!email.trim()) {
+      Alert.alert('Email Required', 'Please enter your email address.');
+      return false;
+    }
+
+    if (!email.includes('@')) {
+      Alert.alert('Invalid Email', 'Please enter a valid email address.');
+      return false;
+    }
+
+    if (!password) {
+      Alert.alert('Password Required', 'Please enter your password.');
+      return false;
+    }
+
+    if (password.length < 6) {
+      Alert.alert('Password Too Short', 'Password must be at least 6 characters.');
+      return false;
+    }
+
+    return true;
   };
 
-  const handleSignUp = async () => {
+  const handleAuth = async () => {
+    if (!validateForm()) return;
+
     setLoading(true);
-    const error = await signUpWithEmail(email.trim(), password);
-    setLoading(false);
-    if (error) Alert.alert('Sign up failed', error);
-    else Alert.alert('Check your email', 'Confirm your email to finish signup.');
+    try {
+      const error = isSignUp
+        ? await signUpWithEmail(email.trim(), password)
+        : await signInWithEmail(email.trim(), password);
+
+      if (error) {
+        Alert.alert(
+          isSignUp ? 'Sign up failed' : 'Sign in failed',
+          error,
+          [{ text: 'OK' }]
+        );
+      } else if (isSignUp) {
+        Alert.alert(
+          'Success!',
+          'Check your email to confirm your account.',
+          [{ text: 'OK' }]
+        );
+      }
+    } catch (error) {
+      Alert.alert(
+        'Error',
+        'An unexpected error occurred. Please try again.',
+        [{ text: 'OK' }]
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -39,7 +83,9 @@ export default function AuthScreen() {
     >
       <View style={styles.card}>
         <Text style={styles.title}>Super Body</Text>
-        <Text style={styles.subtitle}>Sign in to continue</Text>
+        <Text style={styles.subtitle}>
+          {isSignUp ? 'Create Account' : 'Sign in to continue'}
+        </Text>
 
         <TextInput
           style={styles.input}
@@ -50,35 +96,56 @@ export default function AuthScreen() {
           autoCorrect={false}
           value={email}
           onChangeText={setEmail}
+          onSubmitEditing={() => passwordInputRef?.focus()}
         />
         <TextInput
           style={styles.input}
           placeholder="Password"
           placeholderTextColor="#9BA0A8"
-          secureTextEntry
+          secureTextEntry={!showPassword}
           value={password}
           onChangeText={setPassword}
+          ref={(ref) => passwordInputRef = ref}
         />
 
         <TouchableOpacity
+          style={styles.showPasswordButton}
+          onPress={() => setShowPassword(!showPassword)}
+        >
+          <Text style={styles.showPasswordText}>
+            {showPassword ? 'Hide' : 'Show'} Password
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
           style={[styles.button, loading && styles.buttonDisabled]}
-          onPress={handleSignIn}
+          onPress={handleAuth}
           disabled={loading}
         >
-          <Text style={styles.buttonText}>Sign In</Text>
+          <Text style={styles.buttonText}>
+            {loading ? 'Loading...' : (isSignUp ? 'Create Account' : 'Sign In')}
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={[styles.buttonOutline, loading && styles.buttonDisabled]}
-          onPress={handleSignUp}
+          onPress={() => {
+            setIsSignUp(!isSignUp);
+            setEmail('');
+            setPassword('');
+          }}
           disabled={loading}
         >
-          <Text style={styles.buttonOutlineText}>Create Account</Text>
+          <Text style={styles.buttonOutlineText}>
+            {isSignUp ? 'Already have an account? Sign In' : 'Need an account? Sign Up'}
+          </Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
   );
 }
+
+let passwordInputRef: TextInput | null = null;
 
 const styles = StyleSheet.create({
   container: {
@@ -102,9 +169,10 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   subtitle: {
-    fontSize: 14,
+    fontSize: 16,
     color: '#B2B8B0',
     marginBottom: 24,
+    textAlign: 'center',
   },
   input: {
     height: 48,
@@ -113,7 +181,17 @@ const styles = StyleSheet.create({
     borderColor: '#2B3A32',
     paddingHorizontal: 14,
     color: '#F2F5F3',
-    marginBottom: 12,
+    marginBottom: 8,
+    fontSize: 16,
+  },
+  showPasswordButton: {
+    alignSelf: 'flex-end',
+    marginBottom: 16,
+  },
+  showPasswordText: {
+    color: '#8CD98C',
+    fontSize: 14,
+    fontWeight: '500',
   },
   button: {
     height: 48,
@@ -122,10 +200,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 8,
+    marginBottom: 12,
   },
   buttonText: {
     color: '#102316',
     fontWeight: '700',
+    fontSize: 16,
   },
   buttonOutline: {
     height: 48,
@@ -134,11 +214,12 @@ const styles = StyleSheet.create({
     borderColor: '#8CD98C',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 12,
+    marginTop: 8,
   },
   buttonOutlineText: {
     color: '#8CD98C',
-    fontWeight: '700',
+    fontWeight: '500',
+    fontSize: 14,
   },
   buttonDisabled: {
     opacity: 0.6,

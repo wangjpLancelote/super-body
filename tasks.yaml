@@ -98,8 +98,34 @@ phases:
           db: true
           storage: true
 
-  - name: frontend
+  - name: shared
     order: 3
+    tasks:
+      - id: S1
+        name: shared_types
+        domain: shared
+        description: Create shared TypeScript types for mobile and web
+        inputs: []
+        outputs:
+          - apps/mobile/src/types/shared.ts
+          - apps/web/src/types/shared.ts
+        permissions:
+          network: false
+
+      - id: S2
+        name: shared_supabase_config
+        domain: shared
+        description: Shared Supabase client configuration
+        inputs:
+          - supabase.config.md
+        outputs:
+          - apps/mobile/src/lib/supabase.ts
+          - apps/web/src/lib/supabase.ts
+        permissions:
+          network: true
+
+  - name: mobile_frontend
+    order: 4
     tasks:
       - id: D1
         name: rn_project_init
@@ -146,8 +172,69 @@ phases:
         permissions:
           network: true
 
+  - name: web_frontend
+    order: 5
+    tasks:
+      - id: W1
+        name: nextjs_project_init
+        domain: frontend
+        description: Initialize Next.js project with App Router and Tailwind CSS
+        inputs:
+          - apps/web/src/lib/supabase.ts
+        outputs:
+          - apps/web/next.config.mjs
+          - apps/web/tsconfig.json
+          - apps/web/tailwind.config.ts
+          - apps/web/components.json
+        permissions:
+          network: false
+
+      - id: W2
+        name: web_auth_ui
+        domain: frontend
+        description: Login/logout and role-aware state for web
+        inputs:
+          - apps/web/src/lib/supabase.ts
+        outputs:
+          - apps/web/src/auth/*
+        permissions:
+          network: true
+
+      - id: W3
+        name: web_todo_ui
+        domain: frontend
+        description: Todo list with advanced search and filtering for web
+        inputs:
+          - supabase/functions/todos/index.ts
+        outputs:
+          - apps/web/src/todos/*
+        permissions:
+          network: true
+
+      - id: W4
+        name: web_file_ui
+        domain: frontend
+        description: File drag-drop upload and preview for web
+        inputs:
+          - supabase/functions/files/index.ts
+        outputs:
+          - apps/web/src/files/*
+        permissions:
+          network: true
+
+      - id: W5
+        name: web_ai_assistant
+        domain: frontend
+        description: AI assistant chat interface with permission control
+        inputs:
+          - supabase/functions/ai-assistant/index.ts
+        outputs:
+          - apps/web/src/ai/*
+        permissions:
+          network: true
+
   - name: ai
-    order: 4
+    order: 6
     tasks:
       - id: C1
         name: langchain_runtime
@@ -197,7 +284,7 @@ phases:
           llm: true
 
   - name: realtime
-    order: 5
+    order: 7
     tasks:
       - id: E1
         name: supabase_realtime
@@ -221,7 +308,7 @@ phases:
           network: true
 
   - name: ui
-    order: 6
+    order: 8
     tasks:
       - id: F1
         name: information_architecture
@@ -241,6 +328,17 @@ phases:
           - ui/ia.md
         outputs:
           - ui/wireframes.md
+        permissions:
+          design: true
+
+      - id: F3
+        name: web_wireframes
+        domain: ui
+        description: Web-specific wireframes for desktop/tablet interfaces
+        inputs:
+          - ui/ia.md
+        outputs:
+          - ui/web-wireframes.md
         permissions:
           design: true
 

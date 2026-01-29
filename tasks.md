@@ -230,6 +230,123 @@ POST /ai/assistant
 
 ---
 
+## Task Group W – Web 前端（Next.js + Tailwind CSS）
+
+### W1. Next.js 项目初始化
+- 使用 Next.js 14+ App Router
+- 配置 Tailwind CSS
+- 设置 Shadcn/ui 组件库
+- TypeScript 严格模式配置
+
+**产出**：
+- apps/web/next.config.mjs
+- apps/web/tsconfig.json
+- apps/web/tailwind.config.ts
+- apps/web/components.json
+
+---
+
+### W2. 共享库配置
+- 创建跨端共享的类型定义
+- Supabase 客户端配置（与移动端兼容）
+- API 接口类型定义
+- 环境变量管理
+
+**产出**：
+- apps/web/src/lib/shared/
+- apps/web/src/types/
+- apps/web/src/lib/supabase.ts
+
+---
+
+### W3. Web 端认证
+- 登录 / 登出页面
+- 角色感知状态管理
+- Token 持久化
+- 会话管理
+
+**产出**：
+- apps/web/src/auth/
+- apps/web/src/hooks/useAuth.ts
+
+---
+
+### W4. Web 端 Todo 模块
+- Todo 列表（支持高级搜索和筛选）
+- 创建 / 编辑 / 删除 Todo
+- 状态管理（todo / doing / done）
+- 批量操作功能
+- Realtime 订阅
+
+**产出**：
+- apps/web/src/todos/
+- apps/web/src/components/TodoList.tsx
+- apps/web/src/components/TodoForm.tsx
+
+---
+
+### W5. Web 端文件管理
+- 拖拽上传功能
+- 文件预览（图片、视频、PDF）
+- 文件管理界面
+- 批量操作
+- Realtime 同步
+
+**产出**：
+- apps/web/src/files/
+- apps/web/src/components/FileUpload.tsx
+- apps/web/src/components/FileGallery.tsx
+
+---
+
+### W6. Web 端 AI 助手
+- AI 助手聊天界面
+- 文档搜索和总结
+- AI 操作建议
+- 权限控制
+- 响应式设计
+
+**产出**：
+- apps/web/src/ai/
+- apps/web/src/components/AIAssistant.tsx
+
+---
+
+### W7. Web 端导航和布局
+- 响应式导航栏
+- 页面布局组件
+- 权限路由保护
+- 移动端适配
+
+**产出**：
+- apps/web/src/components/Layout.tsx
+- apps/web/src/components/Navigation.tsx
+- apps/web/src/app/(app)/
+
+---
+
+### W8. Web 端高级功能
+- 高级搜索和筛选
+- 数据导出功能
+- 用户设置页面
+- 通知管理
+
+**产出**：
+- apps/web/src/components/SearchBar.tsx
+- apps/web/src/components/ExportModal.tsx
+- apps/web/src/settings/
+
+---
+
+## 执行建议（非常重要）
+
+1. **先 A → B → D → W → C**
+2. 移动端和 Web 端并行开发，共享后端
+3. 所有 AI 写操作走 dry-run
+4. Web 端提供比移动端更丰富的功能
+
+---
+
 ## 终极目标
 
 > 让 AI **按 Task 执行，而不是自由发挥**。

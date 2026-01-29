@@ -1,7 +1,7 @@
 # PLAN.md
 
-> AI Vibe Coding 执行计划（参考 OpenSec 思路）  
-> 项目目标：构建一个 **AI‑Ready 的云端 App（Android APK）**，基于 **React Native + Supabase + LangChain**，当前可用、未来可进化为 AI 原生系统。
+> AI Vibe Coding 执行计划（参考 OpenSec 思路）
+> 项目目标：构建一个 **AI‑Ready 的云端 App（Web + Mobile）**，基于 **Next.js + React Native + Supabase + LangChain**，当前可用、未来可进化为 AI 原生系统。
 
 ---
 
@@ -18,7 +18,18 @@
 
 ## 1. 系统范围（Scope）
 
-### 1.1 客户端（APK）
+### 1.1 客户端
+#### 1.1.1 Web端（Next.js + Tailwind CSS）
+- 响应式设计，支持桌面/平板
+- 用户登录 / 登出
+- 权限感知 UI
+- 股票行情（只读）
+- Todo（CRUD + 状态）
+- 文本 / 图片 / 视频上传与浏览
+- AI 助手入口（只读 → 可执行）
+- 高级搜索和筛选
+
+#### 1.1.2 移动端（React Native + Expo）
 - 用户登录 / 登出
 - 权限感知 UI
 - 股票行情（只读）
@@ -38,11 +49,25 @@
 - Tools（Supabase / 股票 / Todo）
 - Agent（可控执行）
 
+### 1.4 共享层
+- 统一的 Supabase 客户端配置
+- 共享的 API 接口定义
+- 一致的状态管理模式
+
 ---
 
 ## 2. 技术栈锁定（Tech Lock）
 
 ### Client
+#### Web端
+- Next.js 14+ (App Router)
+- TypeScript
+- Tailwind CSS
+- Shadcn/ui组件库
+- Zustand / Zustand
+- TanStack Query (SWR)
+
+#### 移动端
 - React Native + Expo
 - TypeScript
 - Zustand / Redux Toolkit
@@ -59,6 +84,11 @@
 - LangChain (Node.js)
 - OpenAI / Claude（可替换）
 - Supabase Vector Store
+
+### 共享工具
+- Eslint + Prettier
+- Husky + lint-staged
+- TypeScript 严格模式
 
 ---
 
@@ -204,24 +234,39 @@ Phase 3：
 - Supabase 项目初始化
 - Auth + RLS
 - 基础表结构
+- 共享库和类型定义
 
-### Phase 1 – 核心业务
-- 登录
-- Todo
-- 文件存储
+### Phase 1 – 移动端核心业务
+- React Native 项目初始化
+- 登录认证
+- Todo CRUD
+- 文件上传和浏览
 - 股票行情（只读）
 
-### Phase 2 – AI Read‑Only
+### Phase 2 – Web端核心业务
+- Next.js 项目初始化
+- 响应式设计（桌面/平板）
+- 登录认证（与移动端共享）
+- Todo CRUD（增强搜索和筛选）
+- 文件管理（拖拽上传）
+- 高级功能
+
+### Phase 3 – AI Read‑Only
 - 文本 / Todo 向量化
 - AI 总结 / 搜索
+- Web端 AI 助手界面
+- 移动端 AI 助手界面
 
-### Phase 3 – AI Execute（受控）
+### Phase 4 – AI Execute（受控）
 - AI 创建 Todo
 - AI 规划任务
+- Web端 AI 操作权限管理
+- 移动端 AI 操作权限管理
 
-### Phase 4 – AI Native
+### Phase 5 – AI Native
 - Agent Workflow
 - 自动化任务
+- 跨端 AI 一致性保证
 
 ---
 
@@ -236,14 +281,24 @@ Phase 3：
 
 ## 9. 成功标准（Definition of Done）
 
-- App 可独立运行
-- Supabase 为唯一数据源
-- AI 不破坏权限模型
-- 新模型可无痛替换
+- Web 和移动端都可独立运行
+- 共享 Supabase 作为唯一数据源
+- API 接口完全一致，数据结构统一
+- AI 不破坏权限模型，跨端行为一致
+- 新模型可无痛替换，无平台依赖
 
 ---
 
-## 10. 一句话愿景
+## 10. 架构原则
 
-> 这是一个 **可以逐步把“操作权”交给 AI，但永远不会失控的云端 App 平台**。
+- **API First**: 所有客户端共享相同的 RESTful API
+- **共享核心**: 认证、数据模型、API 接口跨端统一
+- **渐进增强**: Web 端提供更多高级功能，移动端保持核心体验
+- **响应式优先**: Web 端适配不同屏幕尺寸，移动端优化触控体验
+
+---
+
+## 11. 一句话愿景
+
+> 这是一个 **支持 Web + Mobile 双端，可以逐步把"操作权"交给 AI，但永远不会失控的云端 App 平台**。
 
