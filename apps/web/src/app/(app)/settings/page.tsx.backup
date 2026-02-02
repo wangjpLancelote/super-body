@@ -1,0 +1,180 @@
+import { User, Settings, Bell, Shield, CreditCard, HelpCircle, LogOut, Moon, Sun, Mail } from 'lucide-react';
+
+export default function SettingsPage() {
+  return (
+    <div className="min-h-[calc(100vh-4rem)]">
+      {/* Breadcrumb */}
+      <div className="px-4 sm:px:6 lg:px-8 py-6">
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <main className="px-4 sm:px:6 lg:px-8 pb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Settings Sidebar */}
+          <div className="lg:col-span-1">
+            <nav className="space-y-1">
+              <a href="#profile" className="flex items-center space-x-3 px-4 py-3 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg">
+                <User className="h-5 w-5" />
+                <span>Profile</span>
+              </a>
+              <a href="#account" className="flex items-center space-x-3 px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg">
+                <Settings className="h-5 w-5" />
+                <span>Account</span>
+              </a>
+              <a href="#notifications" className="flex items-center space-x-3 px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg">
+                <Bell className="h-5 w-5" />
+                <span>Notifications</span>
+              </a>
+              <a href="#security" className="flex items-center space-x-3 px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg">
+                <Shield className="h-5 w-5" />
+                <span>Security</span>
+              </a>
+              <a href="#billing" className="flex items-center space-x-3 px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg">
+                <CreditCard className="h-5 w-5" />
+                <span>Billing</span>
+              </a>
+              <a href="#appearance" className="flex items-center space-x-3 px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg">
+                {Moon.className ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+                <span>Appearance</span>
+              </a>
+              <a href="#help" className="flex items-center space-x-3 px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg">
+                <HelpCircle className="h-5 w-5" />
+                <span>Help & Support</span>
+              </a>
+            </nav>
+          </div>
+
+          {/* Settings Content */}
+          <div className="lg:col-span-3 space-y-6">
+            {/* Profile Section */}
+            <div id="profile" className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-6">Profile Information</h2>
+              <div className="space-y-6">
+                {/* Avatar */}
+                <div className="flex items-center space-x-6">
+                  <div className="relative">
+                    <div className="w-20 h-20 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white text-2xl font-bold">
+                      JD
+                    </div>
+                    <button className="absolute -bottom-1 -right-1 bg-white border border-gray-300 rounded-full p-1 shadow-sm">
+                      <svg className="h-4 w-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13l-3 3m0 0l-3-3m3 3V8" />
+                      </svg>
+                    </button>
+                  </div>
+                  <div>
+                    <button className="text-sm font-medium text-blue-600 hover:text-blue-800">Change Avatar</button>
+                    <p className="text-sm text-gray-500">JPG, GIF or PNG. Max size of 1MB.</p>
+                  </div>
+                </div>
+
+                {/* Form Fields */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                    <input
+                      type="text"
+                      defaultValue="John"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                    <input
+                      type="text"
+                      defaultValue="Doe"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                      <input
+                        type="email"
+                        defaultValue="john.doe@example.com"
+                        className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+                    <input
+                      type="tel"
+                      defaultValue="+1 (555) 123-4567"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-end">
+                  <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    Save Changes
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Account Section */}
+            <div id="account" className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-6">Account Settings</h2>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between py-4 border-b border-gray-200">
+                  <div>
+                    <h3 className="font-medium text-gray-900">Email Notifications</h3>
+                    <p className="text-sm text-gray-500">Receive email updates and notifications</p>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" className="sr-only peer" defaultChecked />
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                  </label>
+                </div>
+                <div className="flex items-center justify-between py-4 border-b border-gray-200">
+                  <div>
+                    <h3 className="font-medium text-gray-900">Two-Factor Authentication</h3>
+                    <p className="text-sm text-gray-500">Add an extra layer of security to your account</p>
+                  </div>
+                  <button className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
+                    Enable
+                  </button>
+                </div>
+                <div className="flex items-center justify-between py-4 border-b border-gray-200">
+                  <div>
+                    <h3 className="font-medium text-gray-900">Language</h3>
+                    <p className="text-sm text-gray-500">English (US)</p>
+                  </div>
+                  <button className="text-sm font-medium text-blue-600 hover:text-blue-800">Change</button>
+                </div>
+                <div className="flex items-center justify-between py-4">
+                  <div>
+                    <h3 className="font-medium text-gray-900">Data Export</h3>
+                    <p className="text-sm text-gray-500">Download your personal data</p>
+                  </div>
+                  <button className="text-sm font-medium text-blue-600 hover:text-blue-800">Export</button>
+                </div>
+              </div>
+            </div>
+
+            {/* Danger Zone */}
+            <div className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-6 text-red-600">Danger Zone</h2>
+              <div className="space-y-4">
+                <div className="p-4 border border-red-200 rounded-lg">
+                  <h3 className="font-medium text-gray-900 mb-2">Delete Account</h3>
+                  <p className="text-sm text-gray-600 mb-4">Permanently delete your account and all your data. This action cannot be undone.</p>
+                  <button className="px-4 py-2 border border-red-600 text-red-600 rounded-lg hover:bg-red-50 transition-colors">
+                    Delete Account
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
