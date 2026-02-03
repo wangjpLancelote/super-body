@@ -230,20 +230,20 @@ Phase 3：
 
 ## 7. 功能交付阶段（Execution Phases）
 
-### Phase 0 – 基础设施
+### Phase 0 – 基础设施 ✅ **已完成**
 - Supabase 项目初始化
 - Auth + RLS
 - 基础表结构
 - 共享库和类型定义
 
-### Phase 1 – 移动端核心业务
+### Phase 1 – 移动端核心业务 ✅ **已完成**
 - React Native 项目初始化
 - 登录认证
 - Todo CRUD
 - 文件上传和浏览
 - 股票行情（只读）
 
-### Phase 2 – Web端核心业务
+### Phase 2 – Web端核心业务 ✅ **已完成**
 - Next.js 项目初始化
 - 响应式设计（桌面/平板）
 - 登录认证（与移动端共享）
@@ -251,22 +251,36 @@ Phase 3：
 - 文件管理（拖拽上传）
 - 高级功能
 
-### Phase 3 – AI Read‑Only
+### Phase 3 – AI Read‑Only ✅ **已完成**
 - 文本 / Todo 向量化
 - AI 总结 / 搜索
 - Web端 AI 助手界面
 - 移动端 AI 助手界面
 
-### Phase 4 – AI Execute（受控）
+### Phase 4 – AI Execute（受控）✅ **已完成**
 - AI 创建 Todo
 - AI 规划任务
 - Web端 AI 操作权限管理
 - 移动端 AI 操作权限管理
 
-### Phase 5 – AI Native
+### Phase 5 – AI Native ✅ **已完成**
 - Agent Workflow
 - 自动化任务
 - 跨端 AI 一致性保证
+
+---
+
+## 8. 待实现功能（Pending Features）
+
+### 移动端增强功能
+- [ ] 文件上传和浏览界面完善
+- [ ] 股票行情 UI 实现
+- [ ] AI 助手界面实现
+
+### 跨端优化
+- [ ] 移动端功能与 Web 端对齐
+- [ ] 统一的用户体验
+- [ ] 响应式设计优化
 
 ---
 

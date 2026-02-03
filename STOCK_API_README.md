@@ -12,15 +12,21 @@ The stock integration has been updated to use real public APIs instead of mock d
 
 ## Environment Configuration
 
-### Update `.env.local`:
+### Update root `.env` (single source):
 
 ```bash
 # Use Sina Finance (Free, Chinese markets)
-NEXT_PUBLIC_STOCK_API_BASE_URL=http://hq.sinajs.cn
+STOCK_API_BASE_URL=http://hq.sinajs.cn
 
 # Optional: Use Alpha Vantage instead (requires API key)
 # STOCK_API_KEY=your-alphavantage-api-key
 # STOCK_API_BASE_URL=https://www.alphavantage.co/query
+```
+
+Then generate module env files:
+
+```bash
+bash scripts/sync-env.sh
 ```
 
 ### Stock Symbols

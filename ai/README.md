@@ -63,25 +63,7 @@ bash ../scripts/sync-env.sh
 
 The sync script generates `ai/.env.local` and other module env files.
 
-```env
-# OpenAI Configuration (optional)
-OPENAI_API_KEY=your_openai_api_key_here
-OPENAI_ORG_ID=your_openai_org_id_here
-
-# Anthropic Configuration (optional)
-ANTHROPIC_API_KEY=your_anthropic_api_key_here
-
-# Supabase Configuration
-SUPABASE_URL=your_supabase_url
-SUPABASE_ANON_KEY=your_supabase_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
-
-# AI Assistant Configuration
-AI_ASSISTANT_DRY_RUN=true
-AI_ASSISTANT_MODEL=gpt-3.5-turbo
-AI_ASSISTANT_MAX_TOKENS=2000
-AI_ASSISTANT_TEMPERATURE=0.7
-```
+See root `.env.example` for the full list of supported keys and comments.
 
 ### LLM Configuration
 

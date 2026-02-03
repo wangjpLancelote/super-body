@@ -84,9 +84,21 @@ npx shadcn-ui@latest add input
 
 ## Environment Variables
 
-Create a `.env.local` file in the root of `apps/web` for environment-specific variables:
+This repo uses **root `.env` as the single source of truth**.
+
+1) Copy and fill root env:
+
+```bash
+cp ../../.env.example ../../.env
+```
+
+2) Generate `apps/web/.env.local` from root `.env`:
+
+```bash
+bash ../../scripts/sync-env.sh
+```
 
 ```env
-NEXT_PUBLIC_API_URL=your_api_url
-NEXT_PUBLIC_APP_NAME=LifeByte
+# Generated file: apps/web/.env.local (do not edit by hand)
+# See root .env.example for the full list of keys.
 ```

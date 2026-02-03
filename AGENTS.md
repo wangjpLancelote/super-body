@@ -40,34 +40,20 @@ root/
    └─ prompts/               # System prompts and instructions
 ```
 
-## Execution Phases & Task Groups
+## Authoritative Documents
 
-Work is organized into distinct phases that must be executed in order. **AI agents are assigned to specific tasks via `agents.yaml` and `tasks.yaml`.**
+Use these as the single source of truth (avoid duplicating content elsewhere):
 
-### Phase 1: Infrastructure (A-tasks)
-- **A1**: Supabase project initialization
-- **A2**: Database schema (PostgreSQL with pgvector)
-- **A3**: Row Level Security (RLS) policies
-
-### Phase 2: Backend (B-tasks)
-- **B1**: Edge Function shared auth/context
-- **B2**: Todo CRUD API
-- **B3**: File upload API
-
-### Phase 3: Frontend (D-tasks)
-- **D1**: React Native project initialization
-- **D2**: Auth UI and state management
-- **D3**: Todo UI with realtime sync
-
-### Phase 4: AI (C-tasks)
-- **C1**: LangChain runtime setup
-- **C2**: Vector store integration (Supabase pgvector)
-- **C3**: Tool definitions (getTodos, createTodo, searchDocuments, getStockPrice)
-- **C4**: AI assistant endpoint
+- `README.md` (entry point + quick start)
+- `repo_structure.md` (directory boundaries and constraints)
+- `plan.md` (architecture, security model, system scope)
+- `tasks.yaml` (task definitions and dependencies)
+- `tasks.md` (human-readable task breakdown)
+- `supabase.config.md` (non-secret Supabase notes + CLI pointers)
 
 ## Development Commands
 
-No `package.json` or npm scripts are currently present in the root. Work will be organized as follows:
+This repo includes a root `package.json` (workspaces) plus module-specific `package.json` files (e.g. `apps/web`).
 
 **Supabase Edge Functions** (Deno):
 - Initialize: `supabase functions new <function-name>`
@@ -80,8 +66,8 @@ No `package.json` or npm scripts are currently present in the root. Work will be
 - Build APK: `eas build --platform android`
 
 **LangChain / AI**:
-- Runtime: Node.js or Deno (to be decided in C1)
-- Package management: npm or deno deps
+- Runtime: Node.js
+- Package management: npm
 
 **Database**:
 - Migrations are SQL files in `supabase/migrations/`
@@ -178,73 +164,7 @@ Root `.env` is the single source of truth. Module env files are generated via
 - For local development, `.env.local` or Supabase CLI configurations
 - Secrets should be passed via environment at runtime, not in code
 
-## Data Models
+## References
 
-### Users & Roles
-- **users**: id, email, role (user | premium | admin), created_at
-- **roles**: id, name
-
-### Todo (with AI vector support)
-- **todos**: id, user_id, title, description, status (todo | doing | done), due_at, embedding (pgvector), created_at
-- RLS: Users can only access their own todos
-- AI uses `user_id` injection to respect RLS
-
-### Documents (Knowledge source for AI)
-- **documents**: id, user_id, content, embedding (pgvector), created_at
-- RLS: Users can only access their own documents
-- Used for semantic search and summarization
-
-### Files (Metadata for Storage)
-- **files**: id, user_id, type (image | video | other), storage_path, created_at
-- RLS: Users can only access their own files
-
-## Edge Functions (_shared/auth.ts)
-
-All Edge Functions must import and use the shared auth module:
-
-```typescript
-// Pattern used in all functions
-import { verifyAuth, getUserContext } from '../_shared/auth.ts';
-
-export async function handler(req: Request) {
-  const { user, role } = await verifyAuth(req);
-  // user.id and role available here
-  // All DB operations auto-respects RLS via user_id
-}
-```
-
-## LangChain Integration
-
-### Tools Must Wrap Edge Functions
-AI tools don't access the database directly. They call Edge Function endpoints:
-- `getTodos(user_id)` → calls `/todos` endpoint
-- `createTodo(user_id, payload)` → calls `/todos` endpoint with POST
-- `searchDocuments(user_id, query)` → vector search via edge function
-- `getStockPrice(symbol)` → external API call
-
-### Vector Store
-- Supabase pgvector is the single source of truth for embeddings
-- Use LangChain's SupabaseVectorStore integration
-- Documents and todos are embedded and searchable
-
-### Agent Execution Model
-- Phase 1: Retrieval + Summarization (read-only)
-- Phase 2: Tool calling with dry-run (inspect before execution)
-- Phase 3: Semi-autonomous execution with audit trail
-
-## Testing & Validation
-
-Each task should have clear acceptance criteria:
-- Code compiles/runs without errors
-- RLS policies prevent unauthorized access
-- AI dry-run outputs are predictable and auditable
-- All secrets are environment-managed
-- Frontend connects to backend via Supabase Client only
-
-## Related Documentation
-
-- **repo_structure.md**: Directory organization and AI constraints
-- **agents.yaml**: Role-based AI agent definitions and permissions
-- **tasks.yaml**: Machine-readable task definitions and dependencies
-- **plan.md**: High-level system design and security model
-- **tasks.md**: Detailed task breakdowns with outputs and constraints
+- Architecture, data models, and security model: `plan.md`
+- Detailed tasks and outputs: `tasks.md` / `tasks.yaml`

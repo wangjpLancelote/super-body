@@ -29,5 +29,8 @@ supabase projects api-keys --project-ref <project_ref>
 
 ### Secrets handling
 
-- Store keys in `.env.local` (local dev) or Supabase secrets (prod).
+- Local dev: store real keys in root `.env` (single source), then run:
+  - `bash scripts/sync-env.sh`
+- Hosted: store secrets in Supabase (Edge Functions), then run:
+  - `bash scripts/sync-supabase-secrets.sh [project_ref]`
 - Never hardcode or commit keys in repo.

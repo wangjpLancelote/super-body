@@ -11,14 +11,16 @@
 ```
 root/
 ├─ apps/
-│  └─ mobile/                # React Native (Expo)
+│  ├─ mobile/                # React Native (Expo)
+│  │  ├─ src/
+│  │  │  ├─ auth/
+│  │  │  ├─ todos/
+│  │  │  ├─ files/
+│  │  │  └─ lib/
+│  │  └─ App.tsx
+│  └─ web/                   # Next.js (Web)
 │     ├─ src/
-│     │  ├─ auth/
-│     │  ├─ todos/
-│     │  ├─ files/
-│     │  └─ lib/
-│     ├─ package.json
-│     └─ app.json
+│     └─ next.config.mjs
 │
 ├─ supabase/
 │  ├─ functions/             # Edge Functions（BFF + AI）
@@ -37,7 +39,6 @@ root/
 │  │  ├─ 001_schema.sql
 │  │  └─ 002_rls.sql
 │  │
-│  ├─ seed.sql
 │  └─ config.toml
 │
 ├─ ai/
@@ -54,10 +55,7 @@ root/
 │  └─ wireframes.md
 │
 ├─ docs/
-│  ├─ PLAN.md
-│  ├─ TASKS.md
-│  ├─ REPO_STRUCTURE.md
-│  └─ SECURITY.md
+│  └─ .gitkeep
 │
 ├─ .env.example
 ├─ scripts/
