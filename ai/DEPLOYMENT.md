@@ -20,7 +20,14 @@ npm install
 
 ### 2. Set Up Environment Variables
 
-Create a `.env.local` file:
+Use the repo root `.env` as the single source of truth:
+
+```bash
+cp ../.env.example ../.env
+bash ../scripts/sync-env.sh
+```
+
+The sync script generates `ai/.env.local` and other module env files.
 
 ```env
 # OpenAI Configuration (optional)

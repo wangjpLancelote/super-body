@@ -60,6 +60,9 @@ root/
 │  └─ SECURITY.md
 │
 ├─ .env.example
+├─ scripts/
+│  ├─ sync-env.sh
+│  └─ sync-supabase-secrets.sh
 ├─ .gitignore
 ├─ AGENTS.md
 ├─ README.md
@@ -102,8 +105,17 @@ root/
 - 不放真实代码
 
 ---
+## 3. 环境变量（单一来源 + 模块映射）
 
-## 3. AI Coding 强制规则
+- 根目录 `.env` 为唯一来源（从 `.env.example` 复制）
+- 使用脚本生成各模块 env 文件：`bash scripts/sync-env.sh`
+- 线上 Edge Functions secrets：`bash scripts/sync-supabase-secrets.sh [project_ref]`
+
+模块映射详见 `AGENTS.md` 的 Environment Layout 章节。
+
+---
+
+## 4. AI Coding 强制规则
 
 - ❌ 禁止 AI 新建未声明目录
 - ❌ 禁止跨目录写文件
@@ -112,7 +124,7 @@ root/
 
 ---
 
-## 4. 推荐 AI 执行顺序（与 TASKS.md 对齐）
+## 5. 推荐 AI 执行顺序（与 TASKS.md 对齐）
 
 1. supabase/migrations
 2. supabase/functions/_shared
@@ -123,6 +135,6 @@ root/
 
 ---
 
-## 5. 一句话约束（给 AI）
+## 6. 一句话约束（给 AI）
 
 > **如果你不知道代码该放哪，说明你不该写这段代码。**

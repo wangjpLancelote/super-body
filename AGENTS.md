@@ -87,6 +87,67 @@ No `package.json` or npm scripts are currently present in the root. Work will be
 - Migrations are SQL files in `supabase/migrations/`
 - Apply via Supabase CLI or direct execution
 
+## Ops Scripts (Environment & Secrets)
+
+These scripts live in `scripts/` and are the supported way to keep env values consistent.
+
+- `bash scripts/sync-env.sh`
+  - Reads root `.env` and generates module env files:
+    - `apps/web/.env.local`
+    - `apps/mobile/.env`
+    - `ai/.env.local`
+    - `supabase/functions/.env`
+- `bash scripts/sync-supabase-secrets.sh [project_ref]`
+  - Reads root `.env` and pushes secrets to **Supabase Edge Functions** via CLI.
+  - You can also set `SUPABASE_PROJECT_REF` in your shell instead of passing an arg.
+
+## Environment Layout (Single Source + Module Mapping)
+
+Root `.env` is the single source of truth. Module env files are generated via
+`bash scripts/sync-env.sh`. The mappings below match `.env.example`.
+
+### Shared Keys (root `.env`)
+
+- `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`
+- `SUPABASE_EDGE_URL` (optional)
+- `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`
+- `STOCK_API_BASE_URL`, `STOCK_API_KEY`
+- `AI_ASSISTANT_DRY_RUN`, `AI_ASSISTANT_MODEL`,
+  `AI_ASSISTANT_MAX_TOKENS`, `AI_ASSISTANT_TEMPERATURE`
+- `NODE_ENV`
+
+### Module: Web (`apps/web/.env.local`)
+
+- `NEXT_PUBLIC_SUPABASE_URL` ← `SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` ← `SUPABASE_ANON_KEY`
+- `NEXT_PUBLIC_SUPABASE_EDGE_URL` ← `SUPABASE_EDGE_URL`
+- `NEXT_PUBLIC_STOCK_API_BASE_URL` ← `STOCK_API_BASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY` ← `SUPABASE_SERVICE_ROLE_KEY`
+- `OPENAI_API_KEY`, `OPENAI_ORG_ID`, `ANTHROPIC_API_KEY`
+- `AI_ASSISTANT_DRY_RUN`, `AI_ASSISTANT_MODEL`,
+  `AI_ASSISTANT_MAX_TOKENS`, `AI_ASSISTANT_TEMPERATURE`
+- `STOCK_API_KEY`
+
+### Module: Mobile (`apps/mobile/.env`)
+
+- `EXPO_PUBLIC_SUPABASE_URL` ← `SUPABASE_URL`
+- `EXPO_PUBLIC_SUPABASE_ANON_KEY` ← `SUPABASE_ANON_KEY`
+- `EXPO_PUBLIC_SUPABASE_EDGE_URL` ← `SUPABASE_EDGE_URL`
+
+### Module: AI (`ai/.env.local`)
+
+- `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`
+- `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`
+- `STOCK_API_KEY`, `STOCK_API_BASE_URL`
+
+### Module: Edge Functions (`supabase/functions/.env`)
+
+- `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`
+- `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`
+- `AI_ASSISTANT_DRY_RUN`, `AI_ASSISTANT_MODEL`,
+  `AI_ASSISTANT_MAX_TOKENS`, `AI_ASSISTANT_TEMPERATURE`
+- `STOCK_API_KEY`, `STOCK_API_BASE_URL`
+
 ## Critical Rules for AI Agents
 
 ### 1. Never Bypass RLS

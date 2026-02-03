@@ -25,8 +25,9 @@ This document describes the runtime environment for the LangChain AI layer in su
 cd ai
 npm install
 
-# Setup environment variables
-cp ../.env.example .env.local
+# Setup environment variables (single source)
+cp ../.env.example ../.env
+bash ../scripts/sync-env.sh
 ```
 
 ### Configuration

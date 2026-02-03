@@ -54,7 +54,14 @@ for await (const chunk of agent.generateStream('What todos do I have?', {
 
 ### Environment Variables
 
-Create a `.env.local` file in the root directory:
+Use the repo root `.env` as the single source of truth:
+
+```bash
+cp ../.env.example ../.env
+bash ../scripts/sync-env.sh
+```
+
+The sync script generates `ai/.env.local` and other module env files.
 
 ```env
 # OpenAI Configuration (optional)
