@@ -1,60 +1,48 @@
 # Super Body (LifeByte) Monorepo
 
-AI-ready cloud application built with **Next.js (Web)**, **React Native (Expo/Mobile)**, **Supabase (DB/Auth/Storage/Functions)**, and **LangChain (AI)**.
+AI-ready cloud application with Next.js (Web), React Native (Expo/Mobile), Supabase (DB/Auth/Storage/Functions), and LangChain (AI).
 
-## 🚀 Quick Start
+**Project Map**
+- `apps/web` Next.js web app
+- `apps/mobile` Expo mobile app
+- `ai` LangChain integration layer
+- `supabase` Edge Functions and database migrations
+- `scripts` environment and ops helpers
 
-### 1. 克隆和安装
+**Quick Start (local dev)**
+1. Prereqs: Node.js 18+, npm, Supabase CLI (for local DB/functions), Expo Go (for mobile).
+2. Install root workspace deps:
 ```bash
-git clone <your-repo-url>
-cd super-body
-
-# 安装依赖
 npm install
-
-# 配置环境变量
-cp .env.example .env
-# 编辑 .env 文件，填入你的 Supabase 配置
 ```
-
-### 2. 启动应用
+3. Install web app deps:
 ```bash
-# 启动 Web 应用 (推荐先启动)
-npm run dev:web
-
-# 启动移动应用
-npm run dev:mobile
-
-# 启动 AI 服务
-npm run dev:ai
-
-# 启动 Supabase 本地服务
-npm run supabase:dev
+cd apps/web && npm install
+```
+4. Configure env:
+```bash
+cp .env.example .env
+bash scripts/sync-env.sh
+```
+5. Run services (separate terminals). Use `supabase start` only if you want local DB/functions:
+```bash
+cd apps/web && npm run dev
+cd apps/mobile && npm run start
+cd ai && npm run dev
+supabase start
 ```
 
-### 3. 访问应用
-- **Web**: http://localhost:3000
-- **移动**: 使用 Expo Go 扫描二维码
+Next.js defaults to `http://localhost:3000` and will switch ports if 3000 is in use.
 
-## 📖 详细文档
+**Docs**
+- `GETTING_STARTED.md` - full setup guide
+- `SETUP.md` - environment + DB notes
+- `plan.md` - architecture and security model
+- `tasks.md` / `tasks.yaml` - task definitions and dependencies
+- `repo_structure.md` - directory boundaries and constraints
+- `AGENTS.md` - agent guidance and rules
+- `supabase.config.md` - Supabase notes and CLI pointers
 
-### 🎯 入门指南
-- **[完整启动指南](GETTING_STARTED.md)** - 详细的启动和配置教程
-- **[项目实施状态](IMPLEMENTATION_STATUS.md)** - 当前项目进度和待完成任务
-
-### 🏗️ 架构和规划
-- **[项目计划](plan.md)** - 架构设计、技术栈和数据模型
-- **[任务分解](tasks.md)** - 可执行任务列表和进度跟踪
-- **[仓库结构](repo_structure.md)** - 目录规范和 AI 编码规则
-- **[代理指南](AGENTS.md)** - 多代理协作指南和环境映射
-
-### ⚙️ 配置文档
-- **[Supabase 配置](supabase.config.md)** - 数据库配置和非密钥信息
-- **[Web 集成计划](.claude/plans/web-integration.md)** - Web 端集成详情
-
-## 🚀 Quick Start (local dev) - 简化版
-
-## Notes
-
-- Do **not** commit secrets. Real keys belong in root `.env` (local) or Supabase secrets (hosted).
+**Notes**
+- Do not commit secrets. Use root `.env` locally and Supabase secrets for hosted Edge Functions.
 - Use `bash scripts/sync-supabase-secrets.sh [project_ref]` to sync Edge Function secrets to hosted Supabase.
