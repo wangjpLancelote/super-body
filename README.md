@@ -1,4 +1,4 @@
-# Super Body (LifeByte) Monorepo
+# Super Body
 
 AI-ready cloud application with Next.js (Web), React Native (Expo/Mobile), Supabase (DB/Auth/Storage/Functions), and LangChain (AI).
 
