@@ -1,0 +1,2 @@
+This would be the adaptive-icon.png for Android
+Replace with actual adaptive icon for production

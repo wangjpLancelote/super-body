@@ -1,0 +1,2 @@
+This would be the splash screen splash.png
+Replace with actual splash screen for production

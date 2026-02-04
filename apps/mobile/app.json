@@ -1,0 +1,78 @@
+{
+  "expo": {
+    "name": "Super Body",
+    "slug": "super-body",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0B0F14"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.superbody.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Allow camera to take photos and videos",
+        "NSPhotoLibraryUsageDescription": "Allow access to photo library to select photos and videos",
+        "NSPhotoLibraryAddUsageDescription": "Allow saving photos to your library"
+      },
+      "config": {
+        "usesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0B0F14"
+      },
+      "package": "com.superbody.app",
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "INTERNET",
+        "ACCESS_NETWORK_STATE",
+        "VIBRATE"
+      ],
+      "softwareKeyboardLayoutMode": "pan",
+      "config": {
+        "googleServicesFile": "./google-services.json"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro",
+      "meta": {
+        "author": "Super Body Team",
+        "description": "AI-Ready cloud application with React Native, Supabase, and LangChain"
+      }
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow Super Body to access your photos",
+          "cameraPermission": "Allow Super Body to access your camera"
+        }
+      ],
+      "expo-av",
+      [
+        "expo-font",
+        {
+          "fonts": ["./assets/fonts/Inter-Regular.ttf", "./assets/fonts/Inter-Bold.ttf"]
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "platforms": ["ios", "android", "web"]
+  }
+}

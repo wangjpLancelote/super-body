@@ -1,0 +1,2 @@
+This would be the app icon (icon.png)
+Replace with actual icon file for production
