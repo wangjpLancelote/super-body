@@ -46,6 +46,13 @@ npx claude-plugins install @anthropics/claude-code-plugins/ralph-loop
 
 ---
 
+## 🧩 Skill 编写模版
+
+- 编写或更新 skill 时，默认使用 `SKILL-SPEC.md` 作为标准模版。
+- 如需扩展模版字段，先更新 `SKILL-SPEC.md`，再应用到具体 skill。
+
+---
+
 ## ⚡ 实战案例（针对 Go/IM Server 项目）
 
 ### 🟢 案例 1：单文件测试（新手入门，10 分钟）

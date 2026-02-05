@@ -36,6 +36,7 @@ If you do not know where code belongs, do not write it.
 - `plan.md`: architecture, security model, system scope.
 - `tasks.md` / `tasks.yaml`: task definitions and dependencies.
 - `supabase.config.md`: Supabase notes and CLI pointers.
+- `SKILL-SPEC.md`: default template for writing skills.
 
 ## Build / Lint / Test Commands
 
