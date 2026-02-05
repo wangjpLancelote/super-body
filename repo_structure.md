@@ -22,6 +22,10 @@ root/
 │     ├─ src/
 │     └─ next.config.mjs
 │
+├─ libs/
+│  ├─ web/                   # Web shared hooks + realtime clients
+│  └─ mobile/                # Mobile shared hooks + realtime clients
+│
 ├─ supabase/
 │  ├─ functions/             # Edge Functions（BFF + AI）
 │  │  ├─ _shared/
@@ -54,6 +58,8 @@ root/
 │  ├─ ia.md
 │  └─ wireframes.md
 │
+├─ skills/                # Claude Code skills (SKILL.md-based)
+│
 ├─ docs/
 │  └─ .gitkeep
 │
@@ -75,6 +81,13 @@ root/
 - 只允许前端代码
 - 不得包含密钥
 - 只通过 Supabase Client / API 调用后端
+
+---
+
+### `/libs`
+- 跨端共享逻辑（当前为 SSE 客户端与 hooks）
+- 仅存通用逻辑，不直接依赖业务 UI
+- 使用前需确保对应 Edge Function（如 `sse-signal`）已实现
 
 ---
 
@@ -101,6 +114,13 @@ root/
 ### `/ui`
 - 只存原型 / 结构说明
 - 不放真实代码
+
+---
+
+### `/skills`
+- Claude Code skills（每个技能一个目录，包含 SKILL.md）
+- 仅存技能说明与可选资源（scripts/references/assets）
+- 不放业务代码或配置
 
 ---
 ## 3. 环境变量（单一来源 + 模块映射）

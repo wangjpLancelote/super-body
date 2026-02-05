@@ -6,6 +6,7 @@ AI-ready cloud application with Next.js (Web), React Native (Expo/Mobile), Supab
 - `apps/web` Next.js web app
 - `apps/mobile` Expo mobile app
 - `ai` LangChain integration layer
+- `libs` shared hooks + realtime clients for web/mobile
 - `supabase` Edge Functions and database migrations
 - `scripts` environment and ops helpers
 
