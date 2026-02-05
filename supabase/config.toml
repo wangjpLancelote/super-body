@@ -58,3 +58,7 @@ verify_jwt = true
 [[edge_functions]]
 slug = "ai-assistant"
 verify_jwt = true
+
+[[edge_functions]]
+slug = "sse-signal"
+verify_jwt = false
