@@ -1,2 +1,1 @@
-export { SkeletonAgent } from "./baseAgent.js";
-export type { Agent } from "./baseAgent.js";
+export * from "./baseAgent.ts";

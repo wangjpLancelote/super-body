@@ -1,5 +1,4 @@
 
-
 > @repo/gateway@0.0.1 typecheck /Users/lorenzo.wang/LifeByte/super-body/apps/gateway
 > tsc --noEmit
 
