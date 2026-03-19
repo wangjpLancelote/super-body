@@ -1,23 +1,24 @@
 {
-  "name": "super-body",
-  "version": "0.0.1",
-  "description": "AI-Ready cloud application with React Native, Supabase, and LangChain",
+  "name": "personal-ai-assistant",
   "private": true,
-  "workspaces": [
-    "apps/mobile",
-    "ai"
-  ],
+  "type": "module",
+  "packageManager": "pnpm@10.28.0",
   "scripts": {
-    "setup": "npm install && supabase start",
-    "dev": "npm run dev --workspaces",
-    "build": "npm run build --workspaces",
-    "lint": "npm run lint --workspaces",
-    "test": "npm run test --workspaces"
+    "dev": "turbo run dev --parallel",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "test:e2e": "pnpm --filter @repo/e2e test"
   },
   "devDependencies": {
-    "typescript": "^5.3.0"
-  },
-  "dependencies": {
-    "@supabase/supabase-js": "^2.93.3"
+    "@types/node": "^24.0.0",
+    "oxlint": "^1.56.0",
+    "prettier": "^3.8.1",
+    "tsx": "^4.20.0",
+    "turbo": "^2.5.0",
+    "typescript": "^5.9.0"
   }
 }

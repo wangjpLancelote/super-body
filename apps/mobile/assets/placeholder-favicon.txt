@@ -1,2 +1,0 @@
-This would be the favicon.ico for web
-Replace with actual favicon for production web build

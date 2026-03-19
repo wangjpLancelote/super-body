@@ -1,0 +1,5 @@
+
+
+> @repo/web@0.0.1 typecheck /Users/lorenzo.wang/LifeByte/super-body/apps/web
+> tsc --noEmit
+

@@ -1,0 +1,5 @@
+
+
+> @repo/agent@0.0.1 typecheck /Users/lorenzo.wang/LifeByte/super-body/packages/agent
+> tsc --noEmit
+
