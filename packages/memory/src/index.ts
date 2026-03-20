@@ -1,1 +1,1 @@
-export { FileMemoryStore } from "./fileMemoryStore.ts";
+export { FileMemoryStore } from "./fileMemoryStore";

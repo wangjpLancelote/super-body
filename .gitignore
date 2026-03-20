@@ -6,3 +6,13 @@ dist/
 .env.local
 .env.*.local
 *.tsbuildinfo
+workspace/secrets.local.json
+
+# pnpm store
+.pnpm-store/
+
+# macOS
+.DS_Store
+
+# test results
+e2e/test-results/

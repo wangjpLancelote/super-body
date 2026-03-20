@@ -63,3 +63,11 @@ export const agentRunResultSchema = z.object({
 });
 
 export type AgentRunResult = z.infer<typeof agentRunResultSchema>;
+
+export const memoryPolicyInputSchema = z.object({
+  message: inboundMessageSchema,
+  assistantReply: z.string().min(1),
+  currentMemory: z.string(),
+});
+
+export type MemoryPolicyInput = z.infer<typeof memoryPolicyInputSchema>;

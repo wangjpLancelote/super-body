@@ -38,12 +38,21 @@ importers:
       '@repo/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@repo/llm':
+        specifier: workspace:*
+        version: link:../../packages/llm
       '@repo/memory':
         specifier: workspace:*
         version: link:../../packages/memory
+      '@repo/tools':
+        specifier: workspace:*
+        version: link:../../packages/tools
       fastify:
         specifier: ^5.8.2
         version: 5.8.2
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
 
   apps/web:
     dependencies:
@@ -78,6 +87,15 @@ importers:
       '@repo/core':
         specifier: workspace:*
         version: link:../core
+      '@repo/llm':
+        specifier: workspace:*
+        version: link:../llm
+      '@repo/tools':
+        specifier: workspace:*
+        version: link:../tools
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
 
   packages/core:
     dependencies:
@@ -85,11 +103,26 @@ importers:
         specifier: ^4.3.6
         version: 4.3.6
 
+  packages/llm:
+    dependencies:
+      openai:
+        specifier: ^6.32.0
+        version: 6.32.0(zod@4.3.6)
+
   packages/memory:
     dependencies:
       '@repo/core':
         specifier: workspace:*
         version: link:../core
+
+  packages/tools:
+    dependencies:
+      '@repo/core':
+        specifier: workspace:*
+        version: link:../core
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
 
 packages:
 
@@ -763,6 +796,18 @@ packages:
     resolution: {integrity: sha512-0eJJY6hXLGf1udHwfNftBqH+g73EU4B504nZeKpz1sYRKafAghwxEJunB2O7rDZkL4PGfsMVnTXZ2EjibbqcsA==}
     engines: {node: '>=14.0.0'}
 
+  openai@6.32.0:
+    resolution: {integrity: sha512-j3k+BjydAf8yQlcOI7WUQMQTbbF5GEIMAE2iZYCOzwwB3S2pCheaWYp+XZRNAch4jWVc52PMDGRRjutao3lLCg==}
+    hasBin: true
+    peerDependencies:
+      ws: ^8.18.0
+      zod: ^3.25 || ^4.0
+    peerDependenciesMeta:
+      ws:
+        optional: true
+      zod:
+        optional: true
+
   oxlint@1.56.0:
     resolution: {integrity: sha512-Q+5Mj5PVaH/R6/fhMMFzw4dT+KPB+kQW4kaL8FOIq7tfhlnEVp6+3lcWqFruuTNlUo9srZUW3qH7Id4pskeR6g==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -1424,6 +1469,10 @@ snapshots:
       - babel-plugin-macros
 
   on-exit-leak-free@2.1.2: {}
+
+  openai@6.32.0(zod@4.3.6):
+    optionalDependencies:
+      zod: 4.3.6
 
   oxlint@1.56.0:
     optionalDependencies:

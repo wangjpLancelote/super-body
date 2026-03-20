@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import type { AppState } from "@repo/core";
 import { fetchGatewayState, sendChatMessage } from "../lib/gateway";
+import { ConfigPanel } from "./config-panel";
 
 export function ChatPanel() {
   const [state, setState] = useState<AppState | null>(null);
@@ -65,6 +66,7 @@ export function ChatPanel() {
 
   return (
     <main style={{ maxWidth: 720, margin: "40px auto", padding: 24 }}>
+      <ConfigPanel />
       <h1>Personal AI Assistant</h1>
       <p data-testid="gateway-status">
         Gateway: {isLoadingState ? "loading..." : (state?.gateway ?? "offline")}

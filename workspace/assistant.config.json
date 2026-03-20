@@ -1,0 +1,10 @@
+{
+  "model": "gpt-5.4",
+  "systemPrompt": "You are a personal AI assistant. Be concise, practical, and helpful.",
+  "memoryPolicy": {
+    "capturePreferences": true,
+    "captureFacts": true,
+    "captureOpenLoops": true,
+    "captureRecentInteractions": true
+  }
+}

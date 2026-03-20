@@ -11,7 +11,7 @@ test("web can talk to gateway", async ({ page }) => {
   await page.getByTestId("chat-submit").click();
 
   await expect(page.getByTestId("chat-reply")).toContainText(
-    "MVP skeleton online.",
+    "MVP runtime online.",
   );
   await expect(page.getByTestId("chat-reply")).toContainText("hello from e2e");
 });
