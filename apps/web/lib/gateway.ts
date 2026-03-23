@@ -7,6 +7,8 @@ import {
   type AssistantConfig,
   type ChatResponse,
   type ConfigView,
+  type ToolsView,
+  toolsViewSchema,
 } from "@repo/core";
 
 const gatewayUrl =
@@ -72,4 +74,17 @@ export async function saveConfig(config: AssistantConfig): Promise<ConfigView> {
 
   const json = await res.json();
   return configViewSchema.parse(json);
+}
+
+export async function fetchTools(): Promise<ToolsView> {
+  const res = await fetch(`${gatewayUrl}/api/tools`, {
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to load tools: ${res.status}`);
+  }
+
+  const json = await res.json();
+  return toolsViewSchema.parse(json);
 }

@@ -22,15 +22,22 @@ import { FileConfigStore } from "./fileConfigStore";
 import {
   ToolRegistry,
   echoTool,
+  HttpFetchUrlClient,
+  createFetchUrlTool,
   BraveSearchClient,
   createWebSearchTool,
 } from "@repo/tools";
+import { toolsViewSchema } from "@repo/core";
+import path from "node:path";
+import { FileSessionStore } from "@repo/session";
+import { registerSessionRoutes } from "./sessionRoutes";
 
 const app = Fastify();
 await app.register(cors, { origin: true });
 
 const toolRegistry = new ToolRegistry();
 toolRegistry.register(echoTool);
+toolRegistry.register(createFetchUrlTool(new HttpFetchUrlClient()));
 
 let runtimeConfig = await loadRuntimeConfig();
 
@@ -42,6 +49,11 @@ if (runtimeConfig.braveApiKey) {
 
 let agent = createAgent(runtimeConfig);
 const { workspaceDir } = resolveWorkspaceRoot();
+
+const sessionsDirectoryPath = path.join(workspaceDir, "sessions");
+const sessionStore = new FileSessionStore(sessionsDirectoryPath);
+await sessionStore.init();
+await registerSessionRoutes(app, sessionStore);
 
 const memoryPath = `${workspaceDir}/memory.md`;
 const memory = new FileMemoryStore(memoryPath);
@@ -115,6 +127,15 @@ app.put<{ Body: unknown }>("/api/config", async (req) => {
   return configViewSchema.parse({
     ...nextConfig,
     hasOpenAiKey: Boolean(runtimeConfig.openaiApiKey),
+  });
+});
+
+app.get("/api/tools", async () => {
+  return toolsViewSchema.parse({
+    tools: toolRegistry.list().map((tool) => ({
+      name: tool.name,
+      description: tool.description,
+    })),
   });
 });
 

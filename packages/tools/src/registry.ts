@@ -4,11 +4,7 @@ import {
   type ToolCall,
   type ToolResult,
 } from "./types";
-import {
-  ToolNotFoundError,
-  ToolTimeoutError,
-  ToolExecutionError,
-} from "./errors";
+import { ToolTimeoutError } from "./errors";
 
 function withTimeout<T>(
   promise: Promise<T>,
@@ -60,7 +56,13 @@ export class ToolRegistry {
     const tool = this.tools.get(call.name);
 
     if (!tool) {
-      throw new ToolNotFoundError(call.name);
+      return toolResultSchema.parse({
+        callId: call.id,
+        toolName: call.name,
+        ok: false,
+        content: "",
+        error: `Tool not found: ${call.name}`,
+      });
     }
 
     try {

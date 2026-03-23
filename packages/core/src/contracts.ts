@@ -71,3 +71,16 @@ export const memoryPolicyInputSchema = z.object({
 });
 
 export type MemoryPolicyInput = z.infer<typeof memoryPolicyInputSchema>;
+
+export const toolViewSchema = z.object({
+  name: z.string(),
+  description: z.string(),
+});
+
+export type ToolView = z.infer<typeof toolViewSchema>;
+
+export const toolsViewSchema = z.object({
+  tools: z.array(toolViewSchema),
+});
+
+export type ToolsView = z.infer<typeof toolsViewSchema>;

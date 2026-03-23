@@ -1,11 +1,15 @@
 import type { AgentRunInput, AgentRunResult } from "@repo/core";
 import type { LlmClient } from "@repo/llm";
+import type { ToolResult } from "@repo/tools";
 import { ToolRegistry } from "@repo/tools";
+import crypto from "node:crypto";
 import type { Agent } from "./baseAgent";
 import { renderToolCatalog } from "./toolCatalog";
 import { tryParseToolCall } from "./toolProtocol";
-import crypto from "node:crypto";
-import type { ToolResult } from "@repo/tools";
+
+const MAX_TOOL_CALLS_PER_RUN = 1;
+const TOOL_LOOP_GUARD_REPLY =
+  "I could not complete the request safely after one tool call. Please try rephrasing or narrowing the request.";
 
 function buildPlanningPrompt(
   input: AgentRunInput,
@@ -23,6 +27,9 @@ function buildPlanningPrompt(
     "",
     "If a tool is required, respond with ONLY valid JSON in this shape:",
     '{"type":"tool_call","toolName":"web_search","arguments":{"query":"latest OpenAI news"}}',
+    "",
+    "Use web_search for finding sources or recent information.",
+    "Use fetch_url for reading a specific public URL in detail.",
     "",
     "If no tool is required, reply directly with plain text.",
   ].join("\n");
@@ -60,6 +67,8 @@ export class ToolAgent implements Agent {
   ) {}
 
   async run(input: AgentRunInput): Promise<AgentRunResult> {
+    let toolCallsExecuted = 0;
+
     const planningOutput = await this.llm.generateText({
       systemPrompt: this.systemPrompt,
       userPrompt: buildPlanningPrompt(input, renderToolCatalog(this.registry)),
@@ -74,6 +83,15 @@ export class ToolAgent implements Agent {
       };
     }
 
+    if (toolCallsExecuted >= MAX_TOOL_CALLS_PER_RUN) {
+      return {
+        reply: TOOL_LOOP_GUARD_REPLY,
+        memoryPatches: [],
+      };
+    }
+
+    toolCallsExecuted += 1;
+
     const toolResult = await this.registry.execute({
       id: crypto.randomUUID(),
       name: toolCall.toolName,
@@ -84,6 +102,13 @@ export class ToolAgent implements Agent {
       systemPrompt: this.systemPrompt,
       userPrompt: buildFinalPrompt(input, toolResult),
     });
+
+    if (tryParseToolCall(finalReply)) {
+      return {
+        reply: TOOL_LOOP_GUARD_REPLY,
+        memoryPatches: [],
+      };
+    }
 
     return {
       reply: finalReply,
