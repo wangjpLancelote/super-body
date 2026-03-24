@@ -1,0 +1,22 @@
+{
+  "session": {
+    "id": "09020afa-6b59-47aa-ac80-fdc159145e45",
+    "title": "New Chat",
+    "createdAt": "2026-03-24T09:38:25.230Z",
+    "updatedAt": "2026-03-24T09:38:25.234Z"
+  },
+  "messages": [
+    {
+      "id": "ce02bea5-2df9-4556-88ad-7432d398d30f",
+      "role": "user",
+      "content": "hello run layer",
+      "createdAt": "2026-03-24T09:38:25.232Z"
+    },
+    {
+      "id": "a79beb94-c006-4107-a6ec-e4a3508f8d09",
+      "role": "assistant",
+      "content": "MVP runtime online. [web] hello run layer",
+      "createdAt": "2026-03-24T09:38:25.234Z"
+    }
+  ]
+}

@@ -5,6 +5,8 @@ import type { AppState } from "@repo/core";
 import { fetchGatewayState, sendChatMessage } from "../lib/gateway";
 import { ConfigPanel } from "./config-panel";
 import { ToolsPanel } from "./tools-panel";
+import { SkillsPanel } from "./skills-panel";
+import { RunsPanel } from "./runs-panel";
 
 export function ChatPanel() {
   const [state, setState] = useState<AppState | null>(null);
@@ -14,6 +16,7 @@ export function ChatPanel() {
   const [isLoadingState, setIsLoadingState] = useState(true);
   const [isSending, setIsSending] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const [runId, setRunId] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -58,6 +61,7 @@ export function ChatPanel() {
       setError("");
       const result = await sendChatMessage(text, sessionId ?? undefined);
       setSessionId(result.sessionId);
+      setRunId(result.runId);
       setReply(result.reply);
       setInput("");
     } catch (err) {
@@ -71,6 +75,8 @@ export function ChatPanel() {
     <main style={{ maxWidth: 720, margin: "40px auto", padding: 24 }}>
       <ConfigPanel />
       <ToolsPanel />
+      <SkillsPanel />
+      <RunsPanel />
       <h1>Personal AI Assistant</h1>
       <p data-testid="gateway-status">
         Gateway: {isLoadingState ? "loading..." : (state?.gateway ?? "offline")}
@@ -78,6 +84,7 @@ export function ChatPanel() {
       <p>Agent: {state?.agentId ?? "-"}</p>
       <p>Memory: {state?.memoryPath ?? "-"}</p>
       <p data-testid="session-id">Session: {sessionId ?? "-"}</p>
+      <p data-testid="run-id">Run: {runId ?? "-"}</p>
 
       <form onSubmit={handleSubmit} style={{ marginTop: 24 }}>
         <input

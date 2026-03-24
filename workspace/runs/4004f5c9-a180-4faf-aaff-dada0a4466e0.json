@@ -1,0 +1,9 @@
+{
+  "id": "4004f5c9-a180-4faf-aaff-dada0a4466e0",
+  "sessionId": "09020afa-6b59-47aa-ac80-fdc159145e45",
+  "status": "completed",
+  "input": "hello run layer",
+  "output": "MVP runtime online. [web] hello run layer",
+  "createdAt": "2026-03-24T09:38:25.231Z",
+  "updatedAt": "2026-03-24T09:38:25.235Z"
+}

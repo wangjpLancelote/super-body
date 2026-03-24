@@ -24,6 +24,7 @@ export const chatResponseSchema = z.object({
   reply: z.string(),
   memoryUpdated: z.boolean(),
   sessionId: z.string().min(1),
+  runId: z.string().min(1),
 });
 
 export type ChatResponse = z.infer<typeof chatResponseSchema>;

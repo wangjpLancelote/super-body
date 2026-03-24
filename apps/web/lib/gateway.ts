@@ -3,12 +3,20 @@ import {
   assistantConfigSchema,
   configViewSchema,
   chatResponseSchema,
+  skillsViewSchema,
+  runDetailResponseSchema,
   type AppState,
   type AssistantConfig,
   type ChatResponse,
   type ConfigView,
   type ToolsView,
+  type SkillsView,
+  type RunDetailResponse,
   toolsViewSchema,
+  listRunsResponseSchema,
+  ListRunsResponse,
+  listRunEventsResponseSchema,
+  type ListRunEventsResponse,
 } from "@repo/core";
 
 const gatewayUrl =
@@ -90,4 +98,71 @@ export async function fetchTools(): Promise<ToolsView> {
 
   const json = await res.json();
   return toolsViewSchema.parse(json);
+}
+
+/**
+ * 页面显示所需Skills数据
+ * 获取Skills
+ */
+export async function fetchSkills(): Promise<SkillsView> {
+  const res = await fetch(`${gatewayUrl}/api/skills`, {
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to load skills: ${res.status}`);
+  }
+
+  const json = await res.json();
+  return skillsViewSchema.parse(json);
+}
+
+/**
+ * 获取任务的执行编排列表和当前任务
+ * @returns
+ */
+export async function fetchRuns(): Promise<ListRunsResponse> {
+  const res = await fetch(`${gatewayUrl}/api/runs`, {
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to load runs: ${res.status}`);
+  }
+
+  const json = await res.json();
+  return listRunsResponseSchema.parse(json);
+}
+
+export async function fetchRun(runId: string): Promise<RunDetailResponse> {
+  const res = await fetch(`${gatewayUrl}/api/runs/${runId}`, {
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to load run: ${res.status}`);
+  }
+
+  const json = await res.json();
+  return runDetailResponseSchema.parse(json);
+}
+
+/**
+ * 获取任务的事件流
+ * @param runId
+ * @returns
+ */
+export async function fetchRunEvents(
+  runId: string,
+): Promise<ListRunEventsResponse> {
+  const res = await fetch(`${gatewayUrl}/api/runs/${runId}/events`, {
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to load run events: ${res.status}`);
+  }
+
+  const json = await res.json();
+  return listRunEventsResponseSchema.parse(json);
 }
