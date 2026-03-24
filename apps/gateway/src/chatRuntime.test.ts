@@ -36,6 +36,7 @@ test("runChatRuntime returns reply and writes memory patches", async () => {
         captureOpenLoops: true,
         captureRecentInteractions: true,
       },
+      transcript: [],
     },
   );
 

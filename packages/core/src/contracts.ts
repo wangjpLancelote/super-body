@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { sessionMessageSchema } from "./session";
 
 export const channelKindSchema = z.enum(["web"]);
 export type ChannelKind = z.infer<typeof channelKindSchema>;
@@ -14,6 +15,7 @@ export type InboundMessage = z.infer<typeof inboundMessageSchema>;
 
 export const chatRequestSchema = z.object({
   text: z.string().min(1),
+  sessionId: z.string().min(1).optional(),
 });
 
 export type ChatRequest = z.infer<typeof chatRequestSchema>;
@@ -21,6 +23,7 @@ export type ChatRequest = z.infer<typeof chatRequestSchema>;
 export const chatResponseSchema = z.object({
   reply: z.string(),
   memoryUpdated: z.boolean(),
+  sessionId: z.string().min(1),
 });
 
 export type ChatResponse = z.infer<typeof chatResponseSchema>;
@@ -53,6 +56,7 @@ export type MemoryPatch = z.infer<typeof memoryPatchSchema>;
 export const agentRunInputSchema = z.object({
   message: inboundMessageSchema,
   memory: z.string(),
+  transcript: z.array(sessionMessageSchema),
 });
 
 export type AgentRunInput = z.infer<typeof agentRunInputSchema>;

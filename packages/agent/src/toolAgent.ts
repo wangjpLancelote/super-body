@@ -19,6 +19,9 @@ function buildPlanningPrompt(
     "Current memory document:",
     input.memory || "(empty)",
     "",
+    "Recent session transcript:",
+    renderTranscript(input.transcript),
+    "",
     "Available tools:",
     toolCatalog,
     "",
@@ -55,6 +58,24 @@ function buildFinalPrompt(
     "If the tool failed or returned no results, explain that clearly and answer as helpfully as possible.",
     "Do not call another tool.",
   ].join("\n");
+}
+
+function renderTranscript(
+  transcript: AgentRunInput["transcript"],
+  maxMessages: number = 8,
+): string {
+  const recentMessages = transcript.slice(-maxMessages);
+  if (recentMessages.length === 0) {
+    return "(no prior session messages)";
+  }
+  return recentMessages
+    .map((message) => {
+      if (message.role === "tool") {
+        return `[tool:${message.toolName ?? "unknown"}] ${message.content}`;
+      }
+      return `[${message.role}: ${message.content}]`;
+    })
+    .join("\n");
 }
 
 export class ToolAgent implements Agent {

@@ -1,6 +1,10 @@
 import type { Agent } from "@repo/agent";
 import { buildMemoryPatches } from "@repo/agent";
-import type { InboundMessage, MemoryPolicyConfig } from "@repo/core";
+import type {
+  InboundMessage,
+  MemoryPolicyConfig,
+  SessionMessage,
+} from "@repo/core";
 
 export interface MemoryStoreLike {
   read(): Promise<string>;
@@ -13,6 +17,7 @@ export interface ChatRuntimeDeps {
   agent: Agent;
   memory: MemoryStoreLike;
   memoryPolicyConfig: MemoryPolicyConfig;
+  transcript: Array<SessionMessage>;
 }
 
 export interface ChatRuntimeResult {
@@ -29,6 +34,7 @@ export async function runChatRuntime(
   const result = await deps.agent.run({
     message,
     memory: currentMemory,
+    transcript: deps.transcript,
   });
 
   const memoryPatches = buildMemoryPatches(

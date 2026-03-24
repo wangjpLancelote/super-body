@@ -13,6 +13,7 @@ export function ChatPanel() {
   const [error, setError] = useState("");
   const [isLoadingState, setIsLoadingState] = useState(true);
   const [isSending, setIsSending] = useState(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -55,7 +56,8 @@ export function ChatPanel() {
     try {
       setIsSending(true);
       setError("");
-      const result = await sendChatMessage(text);
+      const result = await sendChatMessage(text, sessionId ?? undefined);
+      setSessionId(result.sessionId);
       setReply(result.reply);
       setInput("");
     } catch (err) {
@@ -75,6 +77,7 @@ export function ChatPanel() {
       </p>
       <p>Agent: {state?.agentId ?? "-"}</p>
       <p>Memory: {state?.memoryPath ?? "-"}</p>
+      <p data-testid="session-id">Session: {sessionId ?? "-"}</p>
 
       <form onSubmit={handleSubmit} style={{ marginTop: 24 }}>
         <input

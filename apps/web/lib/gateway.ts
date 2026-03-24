@@ -27,13 +27,16 @@ export async function fetchGatewayState(): Promise<AppState> {
   return appStateSchema.parse(json);
 }
 
-export async function sendChatMessage(text: string): Promise<ChatResponse> {
+export async function sendChatMessage(
+  text: string,
+  sessionId?: string,
+): Promise<ChatResponse> {
   const res = await fetch(`${gatewayUrl}/api/chat`, {
     method: "POST",
     headers: {
       "content-type": "application/json",
     },
-    body: JSON.stringify({ text }),
+    body: JSON.stringify({ text, sessionId }),
   });
 
   if (!res.ok) {

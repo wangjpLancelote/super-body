@@ -86,8 +86,34 @@ app.get("/api/state", async () => {
   });
 });
 
-app.post<{ Body: unknown }>("/api/chat", async (req) => {
+app.post<{ Body: unknown }>("/api/chat", async (req, reply) => {
   const body = chatRequestSchema.parse(req.body);
+  let sessionId = body.sessionId;
+  if (sessionId) {
+    const existingTranscript = await sessionStore.getTranscript(sessionId);
+    if (!existingTranscript) {
+      reply.code(404);
+      return {
+        error: "Session not found",
+      };
+    }
+  } else {
+    const session = await sessionStore.createSession("New Chat");
+    sessionId = session.id;
+  }
+
+  await sessionStore.appendMessage(sessionId, {
+    role: "user",
+    content: body.text,
+  });
+
+  const transcript = await sessionStore.getTranscript(sessionId);
+  if (!transcript) {
+    reply.code(404);
+    return {
+      error: "Failed to load session transcript",
+    };
+  }
 
   const message: InboundMessage = {
     channel: "web",
@@ -100,9 +126,15 @@ app.post<{ Body: unknown }>("/api/chat", async (req) => {
     agent,
     memory,
     memoryPolicyConfig: runtimeConfig.memoryPolicy,
+    transcript: transcript.messages,
   });
 
-  return chatResponseSchema.parse(runtimeResult);
+  await sessionStore.appendMessage(sessionId, {
+    role: "assistant",
+    content: runtimeResult.reply,
+  });
+
+  return chatResponseSchema.parse({ ...runtimeResult, sessionId });
 });
 
 app.get("/api/config", async () => {

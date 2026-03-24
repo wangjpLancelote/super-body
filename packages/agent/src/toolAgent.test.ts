@@ -36,6 +36,7 @@ function createInput(text: string) {
       timestamp: "2026-03-23T00:00:00.000Z",
     },
     memory: "# Recent Interactions\n\n",
+    transcript: [],
   };
 }
 

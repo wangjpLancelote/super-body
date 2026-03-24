@@ -8,11 +8,32 @@ function buildUserPrompt(input: AgentRunInput): string {
     "Current memory document:",
     input.memory || "(empty)",
     "",
+    "Recent session transcript:",
+    renderTranscript(input.transcript),
+    "",
     "Incoming user message:",
     input.message.text,
     "",
     "Reply directly to the user.",
   ].join("\n");
+}
+
+function renderTranscript(
+  transcript: AgentRunInput["transcript"],
+  maxMessages: number = 8,
+): string {
+  const recentMessages = transcript.slice(-maxMessages);
+  if (recentMessages.length === 0) {
+    return "(no prior session messages)";
+  }
+  return recentMessages
+    .map((message) => {
+      if (message.role === "tool") {
+        return `[tool:${message.toolName ?? "unknown"}] ${message.content}`;
+      }
+      return `[${message.role}: ${message.content}]`;
+    })
+    .join("\n");
 }
 
 export class LlmAgent implements Agent {
