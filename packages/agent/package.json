@@ -1,19 +1,20 @@
 {
-    "name": "@repo/agent",
-    "version": "0.0.1",
-    "private": true,
-    "type": "module",
-    "main": "src/index.ts",
-    "types": "src/index.ts",
-    "dependencies": {
-        "@repo/core": "workspace:*",
-        "@repo/llm": "workspace:*",
-        "@repo/tools": "workspace:*",
-        "zod": "^4.3.6"
-    },
-    "scripts": {
-        "lint": "oxlint .",
-        "typecheck": "tsc --noEmit",
-        "test": "tsx --test src/**/*.test.ts"
-    }
+  "name": "@repo/agent",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "dependencies": {
+    "@repo/core": "workspace:*",
+    "@repo/llm": "workspace:*",
+    "@repo/tools": "workspace:*",
+    "@repo/policy": "workspace:*",
+    "zod": "^4.3.6"
+  },
+  "scripts": {
+    "lint": "oxlint .",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test src/**/*.test.ts"
+  }
 }

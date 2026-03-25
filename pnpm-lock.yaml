@@ -47,6 +47,9 @@ importers:
       '@repo/memory':
         specifier: workspace:*
         version: link:../../packages/memory
+      '@repo/policy':
+        specifier: workspace:*
+        version: link:../../packages/policy
       '@repo/runs':
         specifier: workspace:*
         version: link:../../packages/runs
@@ -108,6 +111,9 @@ importers:
       '@repo/llm':
         specifier: workspace:*
         version: link:../llm
+      '@repo/policy':
+        specifier: workspace:*
+        version: link:../policy
       '@repo/tools':
         specifier: workspace:*
         version: link:../tools

@@ -33,7 +33,6 @@ import { FileSessionStore } from "@repo/session";
 import { registerSessionRoutes } from "./sessionRoutes";
 import {
   SkillRegistry,
-  coreSkills,
   FilesystemSkillDiscovery,
 } from "@repo/skills";
 import { registerSkillRoutes } from "./skillRoutes";
@@ -41,6 +40,7 @@ import { registerRunRoutes } from "./runRoutes";
 import { FileRunStore } from "@repo/runs";
 import { registerEventRoutes } from "./eventRoutes";
 import { FileRunEventStore } from "@repo/events";
+import { DefaultPolicyEngine } from "@repo/policy";
 
 /**
  * 创建Fastify应用实例并加载注册器
@@ -62,6 +62,7 @@ function createAgent(runtimeConfig: RuntimeConfig) {
       ),
       runtimeConfig.systemPrompt,
       toolRegistry,
+      policyEngine,
     );
   }
   return new SkeletonAgent();
@@ -84,6 +85,11 @@ if (runtimeConfig.braveApiKey) {
     createWebSearchTool(new BraveSearchClient(runtimeConfig.braveApiKey)),
   );
 }
+
+/**
+ * 初始化Policy Engine
+ */
+const policyEngine = new DefaultPolicyEngine();
 
 /**
  * 创建Agent

@@ -17,6 +17,7 @@
     "@repo/events": "workspace:*",
     "@repo/llm": "workspace:*",
     "@repo/memory": "workspace:*",
+    "@repo/policy": "workspace:*",
     "@repo/runs": "workspace:*",
     "@repo/session": "workspace:*",
     "@repo/skills": "workspace:*",

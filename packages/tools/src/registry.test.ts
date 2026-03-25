@@ -9,6 +9,7 @@ test("executes a registered tool successfully", async () => {
   registry.register({
     name: "echo",
     description: "Echo text",
+    riskLevel: "read",
     inputSchema: z.object({
       text: z.string(),
     }),
@@ -46,6 +47,7 @@ test("returns failure result when tool times out", async () => {
   registry.register({
     name: "slow_tool",
     description: "Slow tool",
+    riskLevel: "read",
     inputSchema: z.object({}),
     timeoutMs: 10,
     async execute() {

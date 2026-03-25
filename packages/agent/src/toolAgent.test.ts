@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { z } from "zod";
 import type { LlmClient } from "@repo/llm";
+import type { PolicyEngine } from "@repo/policy";
 import type { Tool } from "@repo/tools";
 import { ToolRegistry } from "@repo/tools";
 import { ToolAgent } from "./toolAgent";
@@ -47,16 +48,27 @@ const echoInputSchema = z.object({
 const echoTool: Tool<typeof echoInputSchema> = {
   name: "echo",
   description: "Echo text",
+  riskLevel: "read",
   inputSchema: echoInputSchema,
   async execute(input) {
     return input.text;
   },
 };
 
+const allowAllPolicyEngine: PolicyEngine = {
+  decideToolExecution() {
+    return {
+      allowed: true,
+      mode: "auto",
+      reason: "Tests allow automatic execution.",
+    };
+  },
+};
+
 test("returns direct reply when model does not request a tool", async () => {
   const llm = new FakeLlmClient(["Direct answer"]);
   const registry = new ToolRegistry();
-  const agent = new ToolAgent(llm, "system", registry);
+  const agent = new ToolAgent(llm, "system", registry, allowAllPolicyEngine);
 
   const result = await agent.run(createInput("hello"));
 
@@ -72,7 +84,7 @@ test("executes one tool call and returns the final model answer", async () => {
   const registry = new ToolRegistry();
   registry.register(echoTool);
 
-  const agent = new ToolAgent(llm, "system", registry);
+  const agent = new ToolAgent(llm, "system", registry, allowAllPolicyEngine);
   const result = await agent.run(createInput("use a tool"));
 
   assert.equal(result.reply, "Final answer from tool output");
@@ -87,7 +99,7 @@ test("blocks a second tool call from leaking back to the user", async () => {
   const registry = new ToolRegistry();
   registry.register(echoTool);
 
-  const agent = new ToolAgent(llm, "system", registry);
+  const agent = new ToolAgent(llm, "system", registry, allowAllPolicyEngine);
   const result = await agent.run(createInput("use a tool"));
 
   assert.match(result.reply, /could not complete the request safely/i);

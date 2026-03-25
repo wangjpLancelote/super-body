@@ -6,6 +6,7 @@ import crypto from "node:crypto";
 import type { Agent } from "./baseAgent";
 import { renderToolCatalog } from "./toolCatalog";
 import { tryParseToolCall } from "./toolProtocol";
+import type { PolicyEngine } from "@repo/policy";
 
 const MAX_TOOL_CALLS_PER_RUN = 1;
 const TOOL_LOOP_GUARD_REPLY =
@@ -85,6 +86,7 @@ export class ToolAgent implements Agent {
     private readonly llm: LlmClient,
     private readonly systemPrompt: string,
     private readonly registry: ToolRegistry,
+    private readonly policyEngine: PolicyEngine,
   ) {}
 
   async run(input: AgentRunInput): Promise<AgentRunResult> {
@@ -112,6 +114,27 @@ export class ToolAgent implements Agent {
     }
 
     toolCallsExecuted += 1;
+
+    const tool = this.registry.get(toolCall.toolName);
+    if (!tool) {
+      return {
+        reply: `Tool not found: ${toolCall.toolName}`,
+        memoryPatches: [],
+      };
+    }
+
+    const decision = this.policyEngine.decideToolExecution({
+      toolName: tool.name,
+      riskLevel: tool.riskLevel,
+      channel: input.message.channel,
+    });
+
+    if (decision.mode !== "auto") {
+      return {
+        reply: `Tool execution was not allowed automatically: ${decision.reason}`,
+        memoryPatches: [],
+      };
+    }
 
     const toolResult = await this.registry.execute({
       id: crypto.randomUUID(),

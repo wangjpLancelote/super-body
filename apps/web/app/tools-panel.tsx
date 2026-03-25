@@ -43,7 +43,8 @@ export function ToolsPanel() {
         <ul data-testid="tools-list">
           {data.tools.map((tool) => (
             <li key={tool.name}>
-              <strong>{tool.name}</strong>: {tool.description}
+              <strong>{tool.name}</strong>
+              {tool.riskLevel}: {tool.description}
             </li>
           ))}
         </ul>
