@@ -8,6 +8,7 @@ const echoInputSchema = z.object({
 export const echoTool: Tool<typeof echoInputSchema> = {
   name: "echo",
   description: "Return the provided text unchanged.",
+  riskLevel: "read",
   inputSchema: echoInputSchema,
   async execute(input) {
     return input.text;

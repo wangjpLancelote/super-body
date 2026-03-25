@@ -360,6 +360,7 @@ app.get("/api/tools", async () => {
     tools: toolRegistry.list().map((tool) => ({
       name: tool.name,
       description: tool.description,
+      riskLevel: tool.riskLevel,
     })),
   });
 });

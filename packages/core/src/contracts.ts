@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { sessionMessageSchema } from "./session";
+import { toolRiskLevelSchema } from "./policy";
 
 export const channelKindSchema = z.enum(["web"]);
 export type ChannelKind = z.infer<typeof channelKindSchema>;
@@ -80,6 +81,7 @@ export type MemoryPolicyInput = z.infer<typeof memoryPolicyInputSchema>;
 export const toolViewSchema = z.object({
   name: z.string(),
   description: z.string(),
+  riskLevel: toolRiskLevelSchema,
 });
 
 export type ToolView = z.infer<typeof toolViewSchema>;

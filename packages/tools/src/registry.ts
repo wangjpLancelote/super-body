@@ -45,6 +45,7 @@ export class ToolRegistry {
       name: tool.name,
       description: tool.description,
       inputSchema: tool.inputSchema,
+      riskLevel: tool.riskLevel,
     }));
   }
 

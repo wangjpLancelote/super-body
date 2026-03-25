@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { ToolRiskLevel } from "@repo/core";
 
 export const toolCallSchema = z.object({
   id: z.string().min(1),
@@ -23,5 +24,6 @@ export interface Tool<Input extends z.ZodTypeAny = z.ZodTypeAny> {
   description: string;
   inputSchema: Input;
   timeoutMs?: number;
+  riskLevel: ToolRiskLevel; // 所有的操作都要走policy engine
   execute(input: z.infer<Input>): Promise<string>;
 }

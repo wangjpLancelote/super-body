@@ -13,6 +13,7 @@ export function createWebSearchTool(
     name: "web_search",
     description: "Search the web for recent or factual information.",
     inputSchema: webSearchInputSchema,
+    riskLevel: "read",
     timeoutMs: 12_000,
     async execute(input) {
       const results = await client.search(input.query);

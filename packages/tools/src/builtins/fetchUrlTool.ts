@@ -6,9 +6,12 @@ const fetchUrlInputSchema = z.object({
   url: z
     .string()
     .url()
-    .refine((value) => value.startsWith("http://") || value.startsWith("https://"), {
-      message: "Only http and https URLs are supported.",
-    }),
+    .refine(
+      (value) => value.startsWith("http://") || value.startsWith("https://"),
+      {
+        message: "Only http and https URLs are supported.",
+      },
+    ),
 });
 
 export function createFetchUrlTool(
@@ -19,6 +22,7 @@ export function createFetchUrlTool(
     description: "Read a public webpage and return its title and text content.",
     inputSchema: fetchUrlInputSchema,
     timeoutMs: 12_000,
+    riskLevel: "read",
     async execute(input) {
       const result = await client.fetchUrl(input.url);
 
